@@ -3,7 +3,7 @@ Maintainer: Colin Watson <cjwatson@debian.org>
 Section: admin
 Priority: optional
 Standards-Version: 3.9.2
-Build-Depends:
+Build-Depends: debhelper (>= 7.0.50~)
 
 Package: pass
 Architecture: all
