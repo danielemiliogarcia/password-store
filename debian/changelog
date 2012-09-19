@@ -13,5 +13,7 @@ password-store (1.3-1) UNRELEASED; urgency=low
   * Policy version 3.9.3: no changes required.
   * Add ${misc:Depends}.
   * Improve layout of package description.
+  * xclip is not a hard dependency, and is only used by the -c/--clip
+    option.  Demote it to Recommends.
 
  -- Jason A. Donenfeld <Jason@zx2c4.com>  Mon, 03 Sep 2012 20:38:44 -0400
