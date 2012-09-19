@@ -1,4 +1,4 @@
-password-store (1.3-1) UNRELEASED; urgency=low
+password-store (1.3-1) unstable; urgency=low
 
   [ Jason A. Donenfeld ]
   * Initial release (closes: #686903, LP: #1047122).
@@ -20,4 +20,4 @@ password-store (1.3-1) UNRELEASED; urgency=low
   * Add a Homepage field.
   * Add a watch file.
 
- -- Jason A. Donenfeld <Jason@zx2c4.com>  Mon, 03 Sep 2012 20:38:44 -0400
+ -- Colin Watson <cjwatson@debian.org>  Wed, 19 Sep 2012 14:15:15 +0100
