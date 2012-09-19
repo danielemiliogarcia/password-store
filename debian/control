@@ -8,4 +8,6 @@ Build-Depends: debhelper (>= 7.0.50~)
 Package: pass
 Architecture: all
 Depends: ${misc:Depends}, xclip, pwgen, git-core, gnupg, tree
-Description: Stores, retrieves, generates, and synchronizes passwords securely using gpg, pwgen, and git.
+Description: lightweight directory-based password manager
+ Stores, retrieves, generates, and synchronizes passwords securely using
+ gpg, pwgen, and git.
