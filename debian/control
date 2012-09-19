@@ -4,6 +4,7 @@ Section: admin
 Priority: optional
 Standards-Version: 3.9.3
 Build-Depends: debhelper (>= 7.0.50~)
+Homepage: http://zx2c4.com/projects/password-store/
 
 Package: pass
 Architecture: all
