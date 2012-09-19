@@ -1,4 +1,4 @@
-Source: pass
+Source: password-store
 Maintainer: Jason A. Donenfeld <Jason@zx2c4.com>
 Section: admin
 Priority: optional
