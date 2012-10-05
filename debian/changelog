@@ -1,8 +1,8 @@
-password-store (1.4-2) UNRELEASED; urgency=low
+password-store (1.4-2) unstable; urgency=low
 
   * Recommend git rather than git-core (closes: #689688).
 
- -- Colin Watson <cjwatson@debian.org>  Fri, 05 Oct 2012 08:05:54 +0100
+ -- Colin Watson <cjwatson@debian.org>  Fri, 05 Oct 2012 08:06:57 +0100
 
 password-store (1.4-1) unstable; urgency=low
 
