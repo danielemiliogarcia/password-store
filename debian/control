@@ -9,7 +9,7 @@ Homepage: http://zx2c4.com/projects/password-store/
 Package: pass
 Architecture: all
 Depends: ${misc:Depends}, pwgen, gnupg, tree
-Recommends: git-core, xclip
+Recommends: git, xclip
 Description: lightweight directory-based password manager
  Stores, retrieves, generates, and synchronizes passwords securely using
  gpg, pwgen, and git.
