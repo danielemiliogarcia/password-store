@@ -1,4 +1,4 @@
-password-store (1.4.2-1) UNRELEASED; urgency=low
+password-store (1.4.2-1) unstable; urgency=low
 
   * New upstream release (closes: #694772).
     - On insert, no-echo mode is now default, with the --echo mode to turn
@@ -8,7 +8,7 @@ password-store (1.4.2-1) UNRELEASED; urgency=low
     Suggests for their dependencies; this may change if upstream decides to
     start installing them by default.
 
- -- Colin Watson <cjwatson@ubuntu.com>  Fri, 30 Nov 2012 12:04:58 +0000
+ -- Colin Watson <cjwatson@debian.org>  Fri, 30 Nov 2012 12:19:18 +0000
 
 password-store (1.4-2) unstable; urgency=low
 
