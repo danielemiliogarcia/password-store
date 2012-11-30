@@ -1,0 +1,3 @@
+contrib/fpm2pass.pl usr/share/pass
+contrib/keepassx2pass.py usr/share/pass
+contrib/lastpass2pass.rb usr/share/pass

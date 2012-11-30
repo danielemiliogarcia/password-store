@@ -10,6 +10,7 @@ Package: pass
 Architecture: all
 Depends: ${misc:Depends}, pwgen, gnupg2, tree
 Recommends: git, xclip
+Suggests: perl, libxml-simple-perl, python, ruby
 Description: lightweight directory-based password manager
  Stores, retrieves, generates, and synchronizes passwords securely using
  gpg, pwgen, and git.
