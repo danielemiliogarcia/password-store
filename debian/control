@@ -9,7 +9,7 @@ Homepage: http://zx2c4.com/projects/password-store/
 Package: pass
 Architecture: all
 Depends: ${misc:Depends}, pwgen, gnupg2 | gnupg, tree
-Recommends: gnupg2, git, xclip
+Recommends: gnupg2, git, xsel
 Suggests: perl, libxml-simple-perl, python, ruby
 Description: lightweight directory-based password manager
  Stores, retrieves, generates, and synchronizes passwords securely using

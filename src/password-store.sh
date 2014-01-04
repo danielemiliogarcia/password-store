@@ -87,17 +87,19 @@ yesno() {
 # BEGIN Platform definable
 #
 clip() {
-	# This base64 business is a disgusting hack to deal with newline inconsistancies
-	# in shell. There must be a better way to deal with this, but because I'm a dolt,
-	# we're going with this for now.
-
-	before="$(xclip -o -selection clipboard | base64)"
-	echo -n "$1" | xclip -selection clipboard
+	before_clipboard=$(xsel -o -b)
+	before_primary=$(xsel -o -p)
+	printf '%s' "$1" | xsel -i -b
+	printf '%s' "$1" | xsel -i -p
 	(
 		sleep 45
-		now="$(xclip -o -selection clipboard | base64)"
-		if [[ $now != $(echo -n "$1" | base64) ]]; then
-			before="$now"
+		now_clipboard=$(xsel -o -b)
+		now_primary=$(xsel -o -p)
+		if [[ $now_clipboard = "$1" ]]; then
+			printf '%s' "$before_clipboard" | xsel -i -b
+		fi
+		if [[ $now_primary = "$1" ]]; then
+			printf '%s' "$before_primary" | xsel -i -p
 		fi
 
 		# It might be nice to programatically check to see if klipper exists,
@@ -108,8 +110,6 @@ clip() {
 		# Clipboard managers frequently write their history out in plaintext,
 		# so we axe it here:
 		qdbus org.kde.klipper /klipper org.kde.klipper.klipper.clearClipboardHistory &>/dev/null
-
-		echo "$before" | base64 -d | xclip -selection clipboard
 	) & disown
 	echo "Copied $2 to clipboard. Will clear in 45 seconds."
 }
