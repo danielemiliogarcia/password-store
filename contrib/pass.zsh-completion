@@ -111,6 +111,8 @@ _pass_complete_entries () {
 
 _pass_complete_keys () {
 	local IFS=$'\n'
+	local GPG=gpg2
+	which $GPG >/dev/null || GPG=gpg
 	# Extract names and email addresses from gpg --list-keys
-	_values 'gpg keys' $(gpg2 --list-secret-keys --with-colons | cut -d : -f 10 | sort -u | sed '/^$/d')
+	_values 'gpg keys' $($GPG --list-secret-keys --with-colons | cut -d : -f 10 | sort -u | sed '/^$/d')
 }

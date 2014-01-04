@@ -1,0 +1,136 @@
+From 89109c17b200a08acb9a610bbcd4caaa44f07233 Mon Sep 17 00:00:00 2001
+From: Helmut Grohne <helmut@subdivi.de>
+Date: Sat, 4 Jan 2014 15:05:05 +0000
+Subject: Support gnupg1 as an alternative to gnupg2
+
+Bug-Debian: http://bugs.debian.org/701845
+Forwarded: no
+Last-Update: 2014-01-04
+
+Patch-Name: gnupg1-support.patch
+---
+ contrib/pass.bash-completion |  4 +++-
+ contrib/pass.zsh-completion  |  4 +++-
+ src/password-store.sh        | 26 ++++++++++++++++----------
+ 3 files changed, 22 insertions(+), 12 deletions(-)
+
+diff --git a/contrib/pass.bash-completion b/contrib/pass.bash-completion
+index d0ef012..90ea642 100644
+--- a/contrib/pass.bash-completion
++++ b/contrib/pass.bash-completion
+@@ -39,8 +39,10 @@ _pass_complete_entries () {
+ 
+ _pass_complete_keys () {
+ 	local IFS=$'\n'
++	local GPG=gpg2
++	which $GPG >/dev/null || GPG=gpg
+ 	# Extract names and email addresses from gpg --list-keys
+-	local keys="$(gpg2 --list-secret-keys --with-colons | cut -d : -f 10 | sort -u | sed '/^$/d')"
++	local keys="$($GPG --list-secret-keys --with-colons | cut -d : -f 10 | sort -u | sed '/^$/d')"
+ 	COMPREPLY+=($(compgen -W "${keys}" -- ${cur}))
+ }
+ 
+diff --git a/contrib/pass.zsh-completion b/contrib/pass.zsh-completion
+index 848bc67..f78512a 100644
+--- a/contrib/pass.zsh-completion
++++ b/contrib/pass.zsh-completion
+@@ -111,6 +111,8 @@ _pass_complete_entries () {
+ 
+ _pass_complete_keys () {
+ 	local IFS=$'\n'
++	local GPG=gpg2
++	which $GPG >/dev/null || GPG=gpg
+ 	# Extract names and email addresses from gpg --list-keys
+-	_values 'gpg keys' $(gpg2 --list-secret-keys --with-colons | cut -d : -f 10 | sort -u | sed '/^$/d')
++	_values 'gpg keys' $($GPG --list-secret-keys --with-colons | cut -d : -f 10 | sort -u | sed '/^$/d')
+ }
+diff --git a/src/password-store.sh b/src/password-store.sh
+index 512a426..2c5c7b4 100755
+--- a/src/password-store.sh
++++ b/src/password-store.sh
+@@ -8,7 +8,13 @@ umask 077
+ PREFIX="${PASSWORD_STORE_DIR:-$HOME/.password-store}"
+ ID="$PREFIX/.gpg-id"
+ GIT_DIR="${PASSWORD_STORE_GIT:-$PREFIX}/.git"
+-GPG_OPTS="--quiet --yes --batch"
++if which gpg2 >/dev/null; then
++	GPG=gpg2
++	GPG_OPTS="--quiet --yes --batch"
++else
++	GPG=gpg
++	GPG_OPTS="--quiet --yes"
++fi
+ 
+ export GIT_DIR
+ export GIT_WORK_TREE="${PASSWORD_STORE_GIT:-$PREFIX}"
+@@ -159,7 +165,7 @@ case "$command" in
+ 
+ 		if [[ $reencrypt -eq 1 ]]; then
+ 			find "$PREFIX" -iname '*.gpg' | while read passfile; do
+-				gpg2 -d $GPG_OPTS "$passfile" | gpg2 -e -r "$gpg_id" -o "$passfile.new" $GPG_OPTS &&
++				$GPG -d $GPG_OPTS "$passfile" | $GPG -e -r "$gpg_id" -o "$passfile.new" $GPG_OPTS &&
+ 				mv -v "$passfile.new" "$passfile"
+ 			done
+ 			git_add_file "$PREFIX" "Reencrypted entire store using new GPG id $gpg_id."
+@@ -221,9 +227,9 @@ case "$command" in
+ 				exit 1
+ 			fi
+ 			if [[ $clip -eq 0 ]]; then
+-				exec gpg2 -d $GPG_OPTS "$passfile"
++				exec $GPG -d $GPG_OPTS "$passfile"
+ 			else
+-				pass="$(gpg2 -d $GPG_OPTS "$passfile" | head -n 1)"
++				pass="$($GPG -d $GPG_OPTS "$passfile" | head -n 1)"
+ 				[[ -n $pass ]] || exit 1
+ 				clip "$pass" "$path"
+ 			fi
+@@ -258,7 +264,7 @@ case "$command" in
+ 		if [[ $multiline -eq 1 ]]; then
+ 			echo "Enter contents of $path and press Ctrl+D when finished:"
+ 			echo
+-			gpg2 -e -r "$ID" -o "$passfile" $GPG_OPTS
++			$GPG -e -r "$ID" -o "$passfile" $GPG_OPTS
+ 		elif [[ $noecho -eq 1 ]]; then
+ 			while true; do
+ 				read -r -p "Enter password for $path: " -s password
+@@ -266,7 +272,7 @@ case "$command" in
+ 				read -r -p "Retype password for $path: " -s password_again
+ 				echo
+ 				if [[ $password == "$password_again" ]]; then
+-					gpg2 -e -r "$ID" -o "$passfile" $GPG_OPTS <<<"$password"
++					$GPG -e -r "$ID" -o "$passfile" $GPG_OPTS <<<"$password"
+ 					break
+ 				else
+ 					echo "Error: the entered passwords do not match."
+@@ -274,7 +280,7 @@ case "$command" in
+ 			done
+ 		else
+ 			read -r -p "Enter password for $path: " -e password
+-			gpg2 -e -r "$ID" -o "$passfile" $GPG_OPTS <<<"$password"
++			$GPG -e -r "$ID" -o "$passfile" $GPG_OPTS <<<"$password"
+ 		fi
+ 		git_add_file "$passfile" "Added given password for $path to store."
+ 		;;
+@@ -296,11 +302,11 @@ case "$command" in
+ 
+ 		action="Added"
+ 		if [[ -f $passfile ]]; then
+-			gpg2 -d -o "$tmp_file" $GPG_OPTS "$passfile" || exit 1
++			$GPG -d -o "$tmp_file" $GPG_OPTS "$passfile" || exit 1
+ 			action="Edited"
+ 		fi
+ 		${EDITOR:-editor} "$tmp_file"
+-		while ! gpg2 -e -r "$ID" -o "$passfile" $GPG_OPTS "$tmp_file"; do
++		while ! $GPG -e -r "$ID" -o "$passfile" $GPG_OPTS "$tmp_file"; do
+ 			echo "GPG encryption failed. Retrying."
+ 			sleep 1
+ 		done
+@@ -338,7 +344,7 @@ case "$command" in
+ 
+ 		pass="$(pwgen -s $symbols $length 1)"
+ 		[[ -n $pass ]] || exit 1
+-		gpg2 -e -r "$ID" -o "$passfile" $GPG_OPTS <<<"$pass"
++		$GPG -e -r "$ID" -o "$passfile" $GPG_OPTS <<<"$pass"
+ 		git_add_file "$passfile" "Added generated password for $path to store."
+ 		
+ 		if [[ $clip -eq 0 ]]; then
