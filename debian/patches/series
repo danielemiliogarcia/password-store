@@ -1,3 +1,4 @@
 editor.patch
 gnupg1-support.patch
 better-clipboard.patch
+zsh-completion-path.patch

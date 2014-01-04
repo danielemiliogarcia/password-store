@@ -1,0 +1,38 @@
+From 99b7ecc111ffb5e2ef8823e517976dbbeae0a0ab Mon Sep 17 00:00:00 2001
+From: Colin Watson <cjwatson@debian.org>
+Date: Sat, 4 Jan 2014 17:01:49 +0000
+Subject: Install zsh completions in vendor directory
+
+Debian uses /usr/share/zsh/vendor-completions/ for packaged completion
+files.
+
+Bug-Debian: http://bugs.debian.org/733121
+Forwarded: not-needed
+Last-Update: 2014-01-04
+
+Patch-Name: zsh-completion-path.patch
+---
+ Makefile | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index 8735c7b..516bd27 100644
+--- a/Makefile
++++ b/Makefile
+@@ -13,14 +13,12 @@ all:
+ 	@echo "Password store is a shell script, so there is nothing to do. Try \"make install\" instead."
+ 
+ install:
+-	@mkdir -p "$(DESTDIR)$(BINDIR)" "$(DESTDIR)$(LIBDIR)" "$(DESTDIR)$(MANDIR)/man1" "$(DESTDIR)$(SYSCONFDIR)/bash_completion.d"
++	@mkdir -p "$(DESTDIR)$(BINDIR)" "$(DESTDIR)$(LIBDIR)" "$(DESTDIR)$(MANDIR)/man1" "$(DESTDIR)$(SYSCONFDIR)/bash_completion.d" "$(DESTDIR)$(PREFIX)/share/zsh/vendor-completions"
+ 	@install -m 0755 -v src/password-store.sh "$(DESTDIR)$(BINDIR)/pass"
+ 	@install -m 0644 -v man/pass.1 "$(DESTDIR)$(MANDIR)/man1/pass.1"
+ 	@install -m 0644 -v contrib/pass.bash-completion "$(DESTDIR)$(SYSCONFDIR)/bash_completion.d/password-store"
++	@install -m 0644 -v contrib/pass.zsh-completion "$(DESTDIR)$(PREFIX)/share/zsh/vendor-completions/_pass"
+ 
+-#	Uncomment to install the zsh completion file.
+-#	@install -m 0644 -v contrib/pass.zsh-completion "$(DESTDIR)$(PREFIX)/share/zsh/site-functions/_pass"
+-#
+ #	Uncomment to install the fish completion file.
+ #	@install -m 0644 -v contrib/pass.fish-completion "$(DESTDIR)$(PREFIX)/share/fish/completions/pass.fish"
+ 
