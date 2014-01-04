@@ -1,0 +1,56 @@
+From ae9cc26b2a2d3caf6ef43006b6d923705d1cf61c Mon Sep 17 00:00:00 2001
+From: Colin Watson <cjwatson@debian.org>
+Date: Sat, 4 Jan 2014 14:29:57 +0000
+Subject: Use editor(1) rather than vi(1) if EDITOR is unset
+
+Bug-Debian: http://bugs.debian.org/722254
+Forwarded: not-needed
+Last-Update: 2014-01-04
+
+Patch-Name: editor.patch
+---
+ man/pass.1            | 2 +-
+ src/password-store.sh | 6 +++---
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/man/pass.1 b/man/pass.1
+index efb5d9b..9e7e6e6 100644
+--- a/man/pass.1
++++ b/man/pass.1
+@@ -86,7 +86,7 @@ before overwriting an existing password, unless \fI--force\fP or \fI-f\fP is spe
+ \fBedit\fP \fIpass-name\fP
+ Insert a new password or edit an existing password using the default text editor specified
+ by the environment variable \fIEDITOR\fP or using
+-.BR vi (1)
++.BR editor (1)
+ as a fallback. This mode makes use of temporary files for editing, but care is taken to
+ ensure that temporary files are created in \fI/dev/shm\fP in order to avoid writing to
+ difficult-to-erase disk sectors. If \fI/dev/shm\fP is not accessible, fallback to
+diff --git a/src/password-store.sh b/src/password-store.sh
+index 26a4bd0..512a426 100755
+--- a/src/password-store.sh
++++ b/src/password-store.sh
+@@ -43,7 +43,7 @@ Usage:
+         the password back. Or, optionally, it may be multiline. Prompt
+         before overwriting existing password unless forced.
+     $program edit pass-name
+-        Insert a new password or edit an existing password using ${EDITOR:-vi}.
++        Insert a new password or edit an existing password using ${EDITOR:-editor}.
+     $program generate [--no-symbols,-n] [--clip,-c] [--force,-f] pass-name pass-length
+         Generate a new password of pass-length with optionally no symbols.
+         Optionally put it on the clipboard and clear board after 45 seconds.
+@@ -299,12 +299,12 @@ case "$command" in
+ 			gpg2 -d -o "$tmp_file" $GPG_OPTS "$passfile" || exit 1
+ 			action="Edited"
+ 		fi
+-		${EDITOR:-vi} "$tmp_file"
++		${EDITOR:-editor} "$tmp_file"
+ 		while ! gpg2 -e -r "$ID" -o "$passfile" $GPG_OPTS "$tmp_file"; do
+ 			echo "GPG encryption failed. Retrying."
+ 			sleep 1
+ 		done
+-		git_add_file "$passfile" "$action password for $path using ${EDITOR:-vi}."
++		git_add_file "$passfile" "$action password for $path using ${EDITOR:-editor}."
+ 		;;
+ 	generate)
+ 		clip=0
