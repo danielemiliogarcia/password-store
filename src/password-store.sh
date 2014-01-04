@@ -233,7 +233,7 @@ cmd_usage() {
 	        during entry. Or, optionally, the entry may be multiline. Prompt before
 	        overwriting existing password unless forced.
 	    $PROGRAM edit pass-name
-	        Insert a new password or edit an existing password using ${EDITOR:-vi}.
+	        Insert a new password or edit an existing password using ${EDITOR:-editor}.
 	    $PROGRAM generate [--no-symbols,-n] [--clip,-c] [--in-place,-i | --force,-f] pass-name pass-length
 	        Generate a new password of pass-length with optionally no symbols.
 	        Optionally put it on the clipboard and clear board after $CLIP_TIME seconds.
@@ -419,13 +419,13 @@ cmd_edit() {
 		$GPG -d -o "$tmp_file" "${GPG_OPTS[@]}" "$passfile" || exit 1
 		action="Edit"
 	fi
-	${EDITOR:-vi} "$tmp_file"
+	${EDITOR:-editor} "$tmp_file"
 	[[ -f $tmp_file ]] || die "New password not saved."
 	$GPG -d -o - "${GPG_OPTS[@]}" "$passfile" | diff - "$tmp_file" &>/dev/null && die "Password unchanged."
 	while ! $GPG -e "${GPG_RECIPIENT_ARGS[@]}" -o "$passfile" "${GPG_OPTS[@]}" "$tmp_file"; do
 		yesno "GPG encryption failed. Would you like to try again?"
 	done
-	git_add_file "$passfile" "$action password for $path using ${EDITOR:-vi}."
+	git_add_file "$passfile" "$action password for $path using ${EDITOR:-editor}."
 }
 
 cmd_generate() {
