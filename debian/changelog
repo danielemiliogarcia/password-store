@@ -1,4 +1,4 @@
-password-store (1.4.2-2) UNRELEASED; urgency=medium
+password-store (1.4.2-2) unstable; urgency=medium
 
   * Use editor(1) rather than vi(1) if EDITOR is unset (closes: #722254).
   * Support gpg as an alternative to gpg2 (thanks, Helmut Grohne; closes:
@@ -8,7 +8,7 @@ password-store (1.4.2-2) UNRELEASED; urgency=medium
     Glaser; closes: #725653).
   * Install zsh completion file (closes: #733121).
 
- -- Colin Watson <cjwatson@debian.org>  Sat, 04 Jan 2014 14:32:46 +0000
+ -- Colin Watson <cjwatson@debian.org>  Fri, 10 Jan 2014 00:57:51 +0000
 
 password-store (1.4.2-1) unstable; urgency=low
 
