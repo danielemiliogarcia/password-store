@@ -2,7 +2,7 @@ Source: password-store
 Maintainer: Colin Watson <cjwatson@debian.org>
 Section: admin
 Priority: optional
-Standards-Version: 3.9.3
+Standards-Version: 3.9.5
 Build-Depends: debhelper (>= 7.0.50~)
 Homepage: http://zx2c4.com/projects/password-store/
 Vcs-Git: git://anonscm.debian.org/collab-maint/password-store.git
