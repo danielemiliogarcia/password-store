@@ -1,3 +1,9 @@
+password-store (1.4.2-3) UNRELEASED; urgency=medium
+
+  * Add Vcs-* fields.
+
+ -- Colin Watson <cjwatson@debian.org>  Wed, 15 Jan 2014 01:41:54 +0000
+
 password-store (1.4.2-2) unstable; urgency=medium
 
   * Use editor(1) rather than vi(1) if EDITOR is unset (closes: #722254).

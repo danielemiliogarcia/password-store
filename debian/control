@@ -5,6 +5,8 @@ Priority: optional
 Standards-Version: 3.9.3
 Build-Depends: debhelper (>= 7.0.50~)
 Homepage: http://zx2c4.com/projects/password-store/
+Vcs-Git: git://anonscm.debian.org/collab-maint/password-store.git
+Vcs-Browser: http://anonscm.debian.org/gitweb/?p=collab-maint/password-store.git
 
 Package: pass
 Architecture: all
