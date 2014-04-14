@@ -11,7 +11,7 @@ Vcs-Browser: http://anonscm.debian.org/gitweb/?p=collab-maint/password-store.git
 Package: pass
 Architecture: all
 Depends: ${misc:Depends}, pwgen, gnupg2 | gnupg, tree
-Recommends: gnupg2, git, xsel
+Recommends: gnupg2, git, xclip
 Suggests: perl, libxml-simple-perl, python, ruby
 Description: lightweight directory-based password manager
  Stores, retrieves, generates, and synchronizes passwords securely using
