@@ -1,4 +1,4 @@
-password-store (1.5-1) UNRELEASED; urgency=medium
+password-store (1.5-1) unstable; urgency=medium
 
   * New upstream release (closes: #744723).
     - Fix typos in "pass generate" documentation (closes: #739949).
@@ -7,7 +7,7 @@ password-store (1.5-1) UNRELEASED; urgency=medium
   * Use dh_python2 to stop python-support generating
     /usr/share/python-support/pass.private.
 
- -- Colin Watson <cjwatson@debian.org>  Mon, 14 Apr 2014 14:57:13 +0100
+ -- Colin Watson <cjwatson@debian.org>  Mon, 14 Apr 2014 16:40:29 +0100
 
 password-store (1.4.2-3) unstable; urgency=medium
 
