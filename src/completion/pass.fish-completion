@@ -1,6 +1,6 @@
 #!/usr/bin/env fish
 
-# Copyright (C) 2012 Dmitry Medvinsky <dmedvinsky@gmail.com>. All Rights Reserved.
+# Copyright (C) 2012-2014 Dmitry Medvinsky <me@dmedvinsky.name>. All Rights Reserved.
 # This file is licensed under the GPLv2+. Please see COPYING for more information.
 
 set PROG 'pass'
@@ -63,6 +63,7 @@ complete -c $PROG -f -A -n '__fish_pass_needs_command' -a version -d 'Command: s
 
 complete -c $PROG -f -A -n '__fish_pass_needs_command' -a init -d 'Command: initialize new password storage'
 complete -c $PROG -f -A -n '__fish_pass_uses_command init' -s e -l reencrypt -d 'Reencrypt existing passwords using new gpg-id'
+complete -c $PROG -f -A -n '__fish_pass_uses_command init' -s p -l path -d 'Assign gpg-id for specified sub folder of password store'
 complete -c $PROG -f -A -n '__fish_contains_opt -s e reencrypt' -a '(__fish_pass_print_gpg_keys)'
 
 complete -c $PROG -f -A -n '__fish_pass_needs_command' -a ls -d 'Command: list passwords'
@@ -99,6 +100,9 @@ complete -c $PROG -f -A -n '__fish_pass_uses_command --clip' -a "(__fish_pass_pr
 
 complete -c $PROG -f -A -n '__fish_pass_needs_command' -a git -d 'Command: execute a git command'
 complete -c $PROG -f -A -n '__fish_pass_uses_command git' -a 'init' -d 'Initialize git repository'
+complete -c $PROG -f -A -n '__fish_pass_uses_command git' -a 'status' -d 'Show status of the repo'
+complete -c $PROG -f -A -n '__fish_pass_uses_command git' -a 'add' -d 'Add changes to the index'
+complete -c $PROG -f -A -n '__fish_pass_uses_command git' -a 'commit' -d 'Commit changes to the repo'
 complete -c $PROG -f -A -n '__fish_pass_uses_command git' -a 'push' -d 'Push changes to remote repo'
 complete -c $PROG -f -A -n '__fish_pass_uses_command git' -a 'pull' -d 'Pull changes from remote repo'
 complete -c $PROG -f -A -n '__fish_pass_uses_command git' -a 'log' -d 'View changelog'
