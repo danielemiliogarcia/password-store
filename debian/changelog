@@ -4,6 +4,8 @@ password-store (1.5-1) UNRELEASED; urgency=medium
     - Fix typos in "pass generate" documentation (closes: #739949).
   * Go back to recommending xclip; pass now supports asking it to copy to
     the PRIMARY selection using PASSWORD_STORE_X_SELECTION=primary.
+  * Use dh_python2 to stop python-support generating
+    /usr/share/python-support/pass.private.
 
  -- Colin Watson <cjwatson@debian.org>  Mon, 14 Apr 2014 14:57:13 +0100
 
