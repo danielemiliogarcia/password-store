@@ -3,14 +3,14 @@ Maintainer: Colin Watson <cjwatson@debian.org>
 Section: admin
 Priority: optional
 Standards-Version: 3.9.5
-Build-Depends: debhelper (>= 7.0.50~), python (>= 2.6.6-3~)
+Build-Depends: debhelper (>= 7.0.50~), python (>= 2.6.6-3~), pwgen, gnupg2 | gnupg, tree (>= 1.7.0), git
 Homepage: http://zx2c4.com/projects/password-store/
 Vcs-Git: git://anonscm.debian.org/collab-maint/password-store.git
 Vcs-Browser: http://anonscm.debian.org/gitweb/?p=collab-maint/password-store.git
 
 Package: pass
 Architecture: all
-Depends: ${misc:Depends}, pwgen, gnupg2 | gnupg, tree
+Depends: ${misc:Depends}, pwgen, gnupg2 | gnupg, tree (>= 1.7.0)
 Recommends: gnupg2, git, xclip
 Suggests: ${python:Depends}, perl, libxml-simple-perl, ruby
 Description: lightweight directory-based password manager

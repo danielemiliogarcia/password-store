@@ -1,4 +1,2 @@
 editor.patch
 gnupg1-support.patch
-zsh-completion-path.patch
-bash-completion-name.patch

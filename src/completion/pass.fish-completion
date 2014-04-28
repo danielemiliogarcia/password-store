@@ -62,9 +62,7 @@ complete -c $PROG -f -A -n '__fish_pass_needs_command' -a help -d 'Command: show
 complete -c $PROG -f -A -n '__fish_pass_needs_command' -a version -d 'Command: show program version'
 
 complete -c $PROG -f -A -n '__fish_pass_needs_command' -a init -d 'Command: initialize new password storage'
-complete -c $PROG -f -A -n '__fish_pass_uses_command init' -s e -l reencrypt -d 'Reencrypt existing passwords using new gpg-id'
 complete -c $PROG -f -A -n '__fish_pass_uses_command init' -s p -l path -d 'Assign gpg-id for specified sub folder of password store'
-complete -c $PROG -f -A -n '__fish_contains_opt -s e reencrypt' -a '(__fish_pass_print_gpg_keys)'
 
 complete -c $PROG -f -A -n '__fish_pass_needs_command' -a ls -d 'Command: list passwords'
 complete -c $PROG -f -A -n '__fish_pass_uses_command ls' -a "(__fish_pass_print_entry_dirs)"
@@ -80,6 +78,14 @@ complete -c $PROG -f -A -n '__fish_pass_uses_command generate' -s n -l no-symbol
 complete -c $PROG -f -A -n '__fish_pass_uses_command generate' -s c -l clip -d 'Put the password in clipboard'
 complete -c $PROG -f -A -n '__fish_pass_uses_command generate' -s f -l force -d 'Do not prompt before overwritting'
 complete -c $PROG -f -A -n '__fish_pass_uses_command generate' -a "(__fish_pass_print_entry_dirs)"
+
+complete -c $PROG -f -A -n '__fish_pass_needs_command' -a mv -d 'Command: rename existing password'
+complete -c $PROG -f -A -n '__fish_pass_uses_command mv' -s f -l force -d 'Force rename'
+complete -c $PROG -f -A -n '__fish_pass_uses_command mv' -a "(__fish_pass_print_entries_and_dirs)"
+
+complete -c $PROG -f -A -n '__fish_pass_needs_command' -a cp -d 'Command: copy existing password'
+complete -c $PROG -f -A -n '__fish_pass_uses_command cp' -s f -l force -d 'Force copy'
+complete -c $PROG -f -A -n '__fish_pass_uses_command cp' -a "(__fish_pass_print_entries_and_dirs)"
 
 complete -c $PROG -f -A -n '__fish_pass_needs_command' -a rm -d 'Command: remove existing password'
 complete -c $PROG -f -A -n '__fish_pass_uses_command rm' -s r -l recursive -d 'Remove password groups recursively'
@@ -106,3 +112,6 @@ complete -c $PROG -f -A -n '__fish_pass_uses_command git' -a 'commit' -d 'Commit
 complete -c $PROG -f -A -n '__fish_pass_uses_command git' -a 'push' -d 'Push changes to remote repo'
 complete -c $PROG -f -A -n '__fish_pass_uses_command git' -a 'pull' -d 'Pull changes from remote repo'
 complete -c $PROG -f -A -n '__fish_pass_uses_command git' -a 'log' -d 'View changelog'
+
+complete -c $PROG -f -A -n '__fish_pass_needs_command' -a find -d 'Command: find a password file or directory matching pattern'
+complete -c $PROG -f -A -n '__fish_pass_needs_command' -a grep -d 'Command: search inside of decrypted password files for matching pattern'

@@ -1,4 +1,4 @@
-From 859817f408d82b01cc42f4e32aaad295479849ca Mon Sep 17 00:00:00 2001
+From 7d0d706be90adc118ac261d01841f8a020dfdaba Mon Sep 17 00:00:00 2001
 From: Helmut Grohne <helmut@subdivi.de>
 Date: Sat, 4 Jan 2014 15:05:05 +0000
 Subject: Support gnupg1 as an alternative to gnupg2
@@ -14,10 +14,10 @@ Patch-Name: gnupg1-support.patch
  2 files changed, 6 insertions(+), 2 deletions(-)
 
 diff --git a/src/completion/pass.bash-completion b/src/completion/pass.bash-completion
-index d80b186..ef49683 100644
+index 332bf51..ae5b77f 100644
 --- a/src/completion/pass.bash-completion
 +++ b/src/completion/pass.bash-completion
-@@ -48,8 +48,10 @@ _pass_complete_folders () {
+@@ -53,8 +53,10 @@ _pass_complete_folders () {
  
  _pass_complete_keys () {
  	local IFS=$'\n'
@@ -30,10 +30,10 @@ index d80b186..ef49683 100644
  }
  
 diff --git a/src/completion/pass.zsh-completion b/src/completion/pass.zsh-completion
-index 7590322..3df64da 100644
+index 4c7548c..61c67cd 100644
 --- a/src/completion/pass.zsh-completion
 +++ b/src/completion/pass.zsh-completion
-@@ -116,6 +116,8 @@ _pass_complete_entries () {
+@@ -123,6 +123,8 @@ _pass_complete_entries () {
  
  _pass_complete_keys () {
  	local IFS=$'\n'

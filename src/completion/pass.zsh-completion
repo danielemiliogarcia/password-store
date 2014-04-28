@@ -1,11 +1,10 @@
 #compdef pass
 #autoload
 
-# Copyright (C) 2012:
+# Copyright (C) 2012 - 2014:
 #    Johan Venant <jvenant@invicem.pro>
 #    Brian Mattern <rephorm@rephorm.com>
 #    Jason A. Donenfeld <Jason@zx2c4.com>.
-#    Santiago Borrazás <sanbor@gmail.com>
 # All Rights Reserved.
 # This file is licensed under the GPLv2+. Please see COPYING for more information.
 
@@ -23,8 +22,6 @@ _pass () {
 		case "${cmd}" in
 			init)
 				_arguments : \
-					"-e[re-encrypt existing passwords]" \
-					"--reencrypt[re-encrypt existing passwords]" \
 					"-p[gpg-id will only be applied to this subfolder]" \
 					"--path[gpg-id will only be applied to this subfolder]"
 				_pass_complete_keys
@@ -47,6 +44,12 @@ _pass () {
 					"-c[copy password to the clipboard]" \
 					"--clip[copy password to the clipboard]"
 				_pass_complete_entries_with_subdirs
+				;;
+			cp|copy|mv|rename)
+				_arguments : \
+					"-f[force rename]" \
+					"--force[force rename]"
+					_pass_complete_entries_with_subdirs
 				;;
 			rm)
 				_arguments : \
@@ -77,10 +80,14 @@ _pass () {
 		subcommands=(
 			"init:Initialize new password storage"
 			"ls:List passwords"
+			"find:Find password files or directories based on pattern"
+			"grep:Search inside decrypted password files for matching pattern"
 			"show:Decrypt and print a password"
 			"insert:Insert a new password"
 			"generate:Generate a new password using pwgen"
 			"edit:Edit a password with \$EDITOR"
+			"mv:Rename the password"
+			"cp:Copy the password"
 			"rm:Remove the password"
 			"git:Call git on the password store"
 			"version:Output version information"
@@ -103,7 +110,7 @@ _pass_cmd_show () {
 _pass_complete_entries_helper () {
 	local IFS=$'\n'
 	local prefix="${PASSWORD_STORE_DIR:-$HOME/.password-store}"
-	_values -C 'passwords' $(find -L "$prefix" \( -name .git -o -name .gpg-id \) -prune -o $@ -print | sed -e "s#${prefix}.##" -e 's#\.gpg##' | sort)
+	_values -C 'passwords' $(find -L "$prefix" \( -name .git -o -name .gpg-id \) -prune -o $@ -print | sed -e "s#${prefix}/\\?##" -e 's#\.gpg##' | sort)
 }
 
 _pass_complete_entries_with_subdirs () {

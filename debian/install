@@ -1,3 +1,4 @@
+contrib/importers/1password2pass.rb usr/share/pass
 contrib/importers/fpm2pass.pl usr/share/pass
 contrib/importers/gorilla2pass.rb usr/share/pass
 contrib/importers/kedpm2pass.py usr/share/pass
