@@ -42,7 +42,11 @@ _pass () {
 					"-n[don't include symbols in password]" \
 					"--no-symbols[don't include symbols in password]" \
 					"-c[copy password to the clipboard]" \
-					"--clip[copy password to the clipboard]"
+					"--clip[copy password to the clipboard]" \
+					"-f[force overwrite]" \
+					"--force[force overwrite]" \
+					"-i[replace first line]" \
+					"--in-place[replace first line]"
 				_pass_complete_entries_with_subdirs
 				;;
 			cp|copy|mv|rename)
@@ -110,7 +114,7 @@ _pass_cmd_show () {
 _pass_complete_entries_helper () {
 	local IFS=$'\n'
 	local prefix="${PASSWORD_STORE_DIR:-$HOME/.password-store}"
-	_values -C 'passwords' $(find -L "$prefix" \( -name .git -o -name .gpg-id \) -prune -o $@ -print | sed -e "s#${prefix}/\\?##" -e 's#\.gpg##' | sort)
+	_values -C 'passwords' $(find -L "$prefix" \( -name .git -o -name .gpg-id \) -prune -o $@ -print | sed -e "s#${prefix}/\{0,1\}##" -e 's#\.gpg##' | sort)
 }
 
 _pass_complete_entries_with_subdirs () {
