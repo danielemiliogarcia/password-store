@@ -1,5 +1,6 @@
-password-store (1.6.2-2) UNRELEASED; urgency=medium
+password-store (1.6.3-1) UNRELEASED; urgency=medium
 
+  * New upstream release.
   * Drop SHELL=/bin/bash when calling "make install", now unnecessary.
   * Bump minimum debhelper version to 8.1.0~ for debian/maintscript.
 
