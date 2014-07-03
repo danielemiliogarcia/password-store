@@ -1,11 +1,11 @@
-password-store (1.6.3-1) UNRELEASED; urgency=medium
+password-store (1.6.3-1) unstable; urgency=medium
 
   * New upstream release.
   * Drop SHELL=/bin/bash when calling "make install", now unnecessary.
   * Bump minimum debhelper version to 8.1.0~ for debian/maintscript.
   * Update for new upstream web site.
 
- -- Colin Watson <cjwatson@debian.org>  Mon, 02 Jun 2014 17:55:41 +0100
+ -- Colin Watson <cjwatson@debian.org>  Thu, 03 Jul 2014 11:28:01 +0100
 
 password-store (1.6.2-1) unstable; urgency=medium
 
