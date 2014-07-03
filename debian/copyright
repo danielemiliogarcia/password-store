@@ -1,7 +1,7 @@
 Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: Password Store
 Upstream-Contact: Jason A. Donenfeld <Jason@zx2c4.com>
-Source: http://git.zx2c4.com/password-store
+Source: http://www.passwordstore.org/
 
 Files: *
 Copyright: Copyright 2012 Jason A. Donenfeld <Jason@zx2c4.com>
