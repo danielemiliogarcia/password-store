@@ -27,7 +27,7 @@
 ;; This package provides functions for working with pass ("the
 ;; standard Unix password manager").
 ;;
-;; http://www.zx2c4.com/projects/password-store/
+;; http://www.passwordstore.org/
 
 ;;; Code:
 
@@ -42,8 +42,11 @@
 (defconst password-store-password-length 8
   "Default password length.")
 
-(defconst password-store-timeout 45
-  "Number of seconds to wait before clearing the password.")
+(defun password-store-timeout ()
+  "Number of seconds to wait before clearing the password."
+  (if (getenv "PASSWORD_STORE_CLIP_TIME")
+      (string-to-number (getenv "PASSWORD_STORE_CLIP_TIME"))
+    45))
 
 (defun password-store--run (&rest args)
   "Run pass with ARGS.
@@ -164,11 +167,10 @@ Returns the first line of the password data."
 (defun password-store-clear ()
   "Clear password in kill ring."
   (interactive)
-  (if password-store-kill-ring-pointer
-      (progn
-	(setcar password-store-kill-ring-pointer "")
-	(setq password-store-kill-ring-pointer nil)
-	(message "Password cleared."))))
+  (when password-store-kill-ring-pointer
+    (setcar password-store-kill-ring-pointer "")
+    (setq password-store-kill-ring-pointer nil)
+    (message "Password cleared.")))
 
 ;;;###autoload
 (defun password-store-copy (entry)
@@ -182,8 +184,8 @@ after `password-store-timeout' seconds."
     (password-store-clear)
     (kill-new password)
     (setq password-store-kill-ring-pointer kill-ring-yank-pointer)
-    (message "Copied %s to the kill ring. Will clear in %s seconds." entry password-store-timeout)
-    (run-at-time password-store-timeout nil 'password-store-clear)))
+    (message "Copied %s to the kill ring. Will clear in %s seconds." entry (password-store-timeout))
+    (run-at-time (password-store-timeout) nil 'password-store-clear)))
 
 ;;;###autoload
 (defun password-store-init (gpg-id)
