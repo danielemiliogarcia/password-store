@@ -7,3 +7,6 @@ override_dh_auto_install:
 		ZSHCOMP_PATH=$$(pwd)/debian/pass/usr/share/zsh/vendor-completions \
 		FORCE_BASHCOMP=1 FORCE_ZSHCOMP=1 \
 		install
+
+override_dh_compress:
+	dh_compress -X.el
