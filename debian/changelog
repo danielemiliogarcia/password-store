@@ -1,11 +1,11 @@
-password-store (1.6.3-2) UNRELEASED; urgency=medium
+password-store (1.6.3-2) unstable; urgency=medium
 
   * Simplify debian/install now that all the importers are in their own
     subdirectory.
   * Install remaining files from contrib/ as documentation or examples as
     appropriate (closes: #754075).
 
- -- Colin Watson <cjwatson@debian.org>  Sat, 27 Sep 2014 16:19:08 +0100
+ -- Colin Watson <cjwatson@debian.org>  Sat, 27 Sep 2014 23:30:36 +0100
 
 password-store (1.6.3-1) unstable; urgency=medium
 
