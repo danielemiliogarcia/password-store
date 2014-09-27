@@ -1,10 +1,1 @@
-contrib/importers/1password2pass.rb usr/share/pass
-contrib/importers/fpm2pass.pl usr/share/pass
-contrib/importers/gorilla2pass.rb usr/share/pass
-contrib/importers/kedpm2pass.py usr/share/pass
-contrib/importers/keepass2pass.py usr/share/pass
-contrib/importers/keepassx2pass.py usr/share/pass
-contrib/importers/kwallet2pass.py usr/share/pass
-contrib/importers/lastpass2pass.rb usr/share/pass
-contrib/importers/pwsafe2pass.sh usr/share/pass
-contrib/importers/revelation2pass.py usr/share/pass
+contrib/importers/* usr/share/pass
