@@ -1,3 +1,10 @@
+password-store (1.6.3-3) UNRELEASED; urgency=medium
+
+  * Cherry-pick from upstream:
+    - Fix pass zsh completion and autoloading (closes: #775268).
+
+ -- Colin Watson <cjwatson@debian.org>  Wed, 14 Jan 2015 11:04:18 +0000
+
 password-store (1.6.3-2) unstable; urgency=medium
 
   * Simplify debian/install now that all the importers are in their own
