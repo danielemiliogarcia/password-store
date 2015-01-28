@@ -6,8 +6,9 @@
 umask "${PASSWORD_STORE_UMASK:-077}"
 set -o pipefail
 
-GPG_OPTS=( "--quiet" "--yes" "--compress-algo=none" )
+GPG_OPTS=( "--quiet" "--yes" "--compress-algo=none" "--no-encrypt-to" )
 GPG="gpg"
+export GPG_TTY="${GPG_TTY:-$(tty 2>/dev/null)}"
 which gpg2 &>/dev/null && GPG="gpg2"
 [[ -n $GPG_AGENT_INFO || $GPG == "gpg2" ]] && GPG_OPTS+=( "--batch" "--use-agent" )
 
@@ -79,16 +80,7 @@ set_gpg_recipients() {
 		GPG_RECIPIENTS+=( "$gpg_id" )
 	done < "$current"
 }
-agent_check() {
-	[[ ! -t 0 || -n $GPG_AGENT_INFO ]] || yesno "$(cat <<-_EOF
-	You are not running gpg-agent. This means that you will
-	need to enter your password for each and every gpg file
-	that pass processes. This could be quite tedious.
 
-	Are you sure you would like to continue without gpg-agent?
-	_EOF
-	)"
-}
 reencrypt_path() {
 	local prev_gpg_recipients="" gpg_keys="" current_keys="" index passfile
 	local groups="$($GPG --list-config --with-colons | grep "^cfg:group:.*")"
@@ -108,7 +100,7 @@ reencrypt_path() {
 				IFS=";" eval 'GPG_RECIPIENTS+=( $group )' # http://unix.stackexchange.com/a/92190
 				unset GPG_RECIPIENTS[$index]
 			done
-			gpg_keys="$($GPG --list-keys --keyid-format long "${GPG_RECIPIENTS[@]}" | sed -n 's/sub *.*\/\([A-F0-9]\{16\}\) .*/\1/p' | LC_ALL=C sort -u)"
+			gpg_keys="$($GPG --list-keys --keyid-format long --list-options show-usage "${GPG_RECIPIENTS[@]}" | sed -n 's/sub *.*\/\([A-F0-9]\{16\}\) .*\[[A-Z]\{0,2\}E[A-Z]\{0,2\}\].*/\1/p' | LC_ALL=C sort -u)"
 		fi
 		current_keys="$($GPG -v --no-secmem-warning --no-permission-warning --list-only --keyid-format long "$passfile" 2>&1 | cut -d ' ' -f 5 | LC_ALL=C sort -u)"
 
@@ -139,11 +131,10 @@ clip() {
 	# This base64 business is because bash cannot store binary data in a shell
 	# variable. Specifically, it cannot store nulls nor (non-trivally) store
 	# trailing new lines.
-
 	local sleep_argv0="password store sleep on display $DISPLAY"
 	pkill -f "^$sleep_argv0" 2>/dev/null && sleep 0.5
-	local before="$(xclip -o -selection "$X_SELECTION" | base64)"
-	echo -n "$1" | xclip -selection "$X_SELECTION"
+	local before="$(xclip -o -selection "$X_SELECTION" 2>/dev/null | base64)"
+	echo -n "$1" | xclip -selection "$X_SELECTION" || die "Error: Could not copy data to the clipboard"
 	(
 		( exec -a "$sleep_argv0" sleep "$CLIP_TIME" )
 		local now="$(xclip -o -selection "$X_SELECTION" | base64)"
@@ -210,7 +201,7 @@ cmd_version() {
 	============================================
 	= pass: the standard unix password manager =
 	=                                          =
-	=                  v1.6.3                  =
+	=                  v1.6.4                  =
 	=                                          =
 	=             Jason A. Donenfeld           =
 	=               Jason@zx2c4.com            =
@@ -245,7 +236,7 @@ cmd_usage() {
 	        Insert a new password or edit an existing password using ${EDITOR:-editor}.
 	    $PROGRAM generate [--no-symbols,-n] [--clip,-c] [--in-place,-i | --force,-f] pass-name pass-length
 	        Generate a new password of pass-length with optionally no symbols.
-	        Optionally put it on the clipboard and clear board after 45 seconds.
+	        Optionally put it on the clipboard and clear board after $CLIP_TIME seconds.
 	        Prompt before overwriting existing password unless forced.
 	        Optionally replace only the first line of an existing file with a new password.
 	    $PROGRAM rm [--recursive,-r] [--force,-f] pass-name
@@ -298,7 +289,6 @@ cmd_init() {
 		git_add_file "$gpg_id" "Set GPG id to ${id_print%, }."
 	fi
 
-	agent_check
 	reencrypt_path "$PREFIX/$id_path"
 	git_add_file "$PREFIX/$id_path" "Reencrypt password store using new GPG id ${id_print%, }."
 }
@@ -332,7 +322,7 @@ cmd_show() {
 		else
 			echo "${path%\/}"
 		fi
-		tree -C -l --noreport "$PREFIX/$path" | tail -n +2 | sed 's/\.gpg$//'
+		tree -C -l --noreport "$PREFIX/$path" | tail -n +2 | sed 's/\.gpg\(\x1B\[[0-9]\+m\)\{0,1\}\( ->\|$\)/\1\2/g' # remove .gpg at end of line, but keep colors
 	elif [[ -z $path ]]; then
 		die "Error: password store is empty. Try \"pass init\"."
 	else
@@ -344,23 +334,23 @@ cmd_find() {
 	[[ -z "$@" ]] && die "Usage: $PROGRAM $COMMAND pass-names..."
 	IFS="," eval 'echo "Search Terms: $*"'
 	local terms="*$(printf '%s*|*' "$@")"
-	tree -C -l --noreport -P "${terms%|*}" --prune --matchdirs --ignore-case "$PREFIX" | tail -n +2 | sed 's/\.gpg$//'
+	tree -C -l --noreport -P "${terms%|*}" --prune --matchdirs --ignore-case "$PREFIX" | tail -n +2 | sed 's/\.gpg\(\x1B\[[0-9]\+m\)\{0,1\}\( ->\|$\)/\1\2/g'
 }
 
 cmd_grep() {
 	[[ $# -ne 1 ]] && die "Usage: $PROGRAM $COMMAND search-string"
-	agent_check
 	local search="$1" passfile grepresults
 	while read -r -d "" passfile; do
 		grepresults="$($GPG -d "${GPG_OPTS[@]}" "$passfile" | grep --color=always "$search")"
 		[ $? -ne 0 ] && continue
 		passfile="${passfile%.gpg}"
 		passfile="${passfile#$PREFIX/}"
-		local passfile_dir="${passfile%/*}"
+		local passfile_dir="${passfile%/*}/"
+		[[ $passfile_dir == "${passfile}/" ]] && passfile_dir=""
 		passfile="${passfile##*/}"
-		printf "\e[94m%s/\e[1m%s\e[0m:\n" "$passfile_dir" "$passfile"
+		printf "\e[94m%s\e[1m%s\e[0m:\n" "$passfile_dir" "$passfile"
 		echo "$grepresults"
-	done < <(find "$PREFIX" -iname '*.gpg' -print0)
+	done < <(find -L "$PREFIX" -iname '*.gpg' -print0)
 }
 
 cmd_insert() {
@@ -431,6 +421,7 @@ cmd_edit() {
 	fi
 	${EDITOR:-editor} "$tmp_file"
 	[[ -f $tmp_file ]] || die "New password not saved."
+	$GPG -d -o - "${GPG_OPTS[@]}" "$passfile" | diff - "$tmp_file" &>/dev/null && die "Password unchanged."
 	while ! $GPG -e "${GPG_RECIPIENT_ARGS[@]}" -o "$passfile" "${GPG_OPTS[@]}" "$tmp_file"; do
 		yesno "GPG encryption failed. Would you like to try again?"
 	done
@@ -592,7 +583,7 @@ case "$1" in
 	show|ls|list) shift;		cmd_show "$@" ;;
 	find|search) shift;		cmd_find "$@" ;;
 	grep) shift;			cmd_grep "$@" ;;
-	insert) shift;			cmd_insert "$@" ;;
+	insert|add) shift;		cmd_insert "$@" ;;
 	edit) shift;			cmd_edit "$@" ;;
 	generate) shift;		cmd_generate "$@" ;;
 	delete|rm|remove) shift;	cmd_delete "$@" ;;

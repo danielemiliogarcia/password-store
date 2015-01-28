@@ -1,4 +1,4 @@
-From 3fda25587390bab6dc7d77b5b0361e01630248d8 Mon Sep 17 00:00:00 2001
+From 25e23071a40877d54499ba75dff0b3034a4d5ede Mon Sep 17 00:00:00 2001
 From: Helmut Grohne <helmut@subdivi.de>
 Date: Sat, 4 Jan 2014 15:05:05 +0000
 Subject: Support gnupg1 as an alternative to gnupg2
@@ -30,10 +30,10 @@ index ea31fbf..88a2bc5 100644
  }
  
 diff --git a/src/completion/pass.zsh-completion b/src/completion/pass.zsh-completion
-index b658398..a31da77 100644
+index 9bb3f97..1101d81 100644
 --- a/src/completion/pass.zsh-completion
 +++ b/src/completion/pass.zsh-completion
-@@ -127,6 +127,8 @@ _pass_complete_entries () {
+@@ -127,8 +127,10 @@ _pass_complete_entries () {
  
  _pass_complete_keys () {
  	local IFS=$'\n'
@@ -43,3 +43,5 @@ index b658398..a31da77 100644
 -	_values 'gpg keys' $(gpg2 --list-secret-keys --with-colons | cut -d : -f 10 | sort -u | sed '/^$/d')
 +	_values 'gpg keys' $($GPG --list-secret-keys --with-colons | cut -d : -f 10 | sort -u | sed '/^$/d')
  }
+ 
+ _pass

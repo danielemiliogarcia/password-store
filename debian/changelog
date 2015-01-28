@@ -1,3 +1,9 @@
+password-store (1.6.4-1) UNRELEASED; urgency=medium
+
+  * New upstream release.
+
+ -- Colin Watson <cjwatson@debian.org>  Wed, 28 Jan 2015 13:51:28 +0000
+
 password-store (1.6.3-3) unstable; urgency=medium
 
   * Cherry-pick from upstream:
