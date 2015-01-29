@@ -2,6 +2,7 @@ password-store (1.6.5-1) UNRELEASED; urgency=medium
 
   * New upstream release.
   * Install contrib/vim/ as examples.
+  * Policy version 3.9.6: no changes required.
 
  -- Colin Watson <cjwatson@debian.org>  Wed, 28 Jan 2015 13:51:28 +0000
 
