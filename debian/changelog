@@ -1,4 +1,4 @@
-password-store (1.6.5-1) UNRELEASED; urgency=medium
+password-store (1.6.5-1) unstable; urgency=medium
 
   * New upstream release.
   * Install contrib/vim/ as examples.
@@ -6,7 +6,7 @@ password-store (1.6.5-1) UNRELEASED; urgency=medium
   * Build-depend on dh-python.
   * Policy version 3.9.6: no changes required.
 
- -- Colin Watson <cjwatson@debian.org>  Wed, 28 Jan 2015 13:51:28 +0000
+ -- Colin Watson <cjwatson@debian.org>  Thu, 29 Jan 2015 14:29:40 +0000
 
 password-store (1.6.3-3) unstable; urgency=medium
 
