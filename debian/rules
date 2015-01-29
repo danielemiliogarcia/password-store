@@ -8,5 +8,8 @@ override_dh_auto_install:
 		FORCE_BASHCOMP=1 FORCE_ZSHCOMP=1 \
 		install
 
+override_dh_installexamples:
+	dh_installexamples -X.gitignore
+
 override_dh_compress:
 	dh_compress -X.el
