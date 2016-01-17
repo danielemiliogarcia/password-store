@@ -1,8 +1,8 @@
-password-store (1.6.5-3) UNRELEASED; urgency=medium
+password-store (1.6.5-3) unstable; urgency=medium
 
   * Upgrade to debhelper v9.
 
- -- Colin Watson <cjwatson@debian.org>  Sat, 16 Jan 2016 22:59:26 +0000
+ -- Colin Watson <cjwatson@debian.org>  Sun, 17 Jan 2016 18:30:26 +0000
 
 password-store (1.6.5-2) unstable; urgency=medium
 
