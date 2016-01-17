@@ -1,3 +1,9 @@
+password-store (1.6.5-3) UNRELEASED; urgency=medium
+
+  * Upgrade to debhelper v9.
+
+ -- Colin Watson <cjwatson@debian.org>  Sat, 16 Jan 2016 22:59:26 +0000
+
 password-store (1.6.5-2) unstable; urgency=medium
 
   * Install fish completion file (closes: #797597).
