@@ -1,3 +1,9 @@
+password-store (1.6.5-4) UNRELEASED; urgency=medium
+
+  * Use HTTPS for Vcs-* URLs, and link to cgit rather than gitweb.
+
+ -- Colin Watson <cjwatson@debian.org>  Wed, 27 Jan 2016 13:26:05 +0000
+
 password-store (1.6.5-3) unstable; urgency=medium
 
   * Upgrade to debhelper v9.
