@@ -1,6 +1,7 @@
 password-store (1.6.5-4) UNRELEASED; urgency=medium
 
   * Use HTTPS for Vcs-* URLs, and link to cgit rather than gitweb.
+  * Policy version 3.9.8: no changes required.
 
  -- Colin Watson <cjwatson@debian.org>  Wed, 27 Jan 2016 13:26:05 +0000
 
