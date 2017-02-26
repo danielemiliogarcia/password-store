@@ -1,4 +1,4 @@
-From b9a8603c6c800852aa3434ed664fc3261a4b5581 Mon Sep 17 00:00:00 2001
+From 86daf1fd6a7d5d3ffa39cdb3b7196b7aba3f6200 Mon Sep 17 00:00:00 2001
 From: Colin Watson <cjwatson@debian.org>
 Date: Sat, 4 Jan 2014 14:29:57 +0000
 Subject: Use editor(1) rather than vi(1) if EDITOR is unset
@@ -14,10 +14,10 @@ Patch-Name: editor.patch
  2 files changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/man/pass.1 b/man/pass.1
-index 0dd6952..3b1eb70 100644
+index e842178..966a447 100644
 --- a/man/pass.1
 +++ b/man/pass.1
-@@ -105,7 +105,7 @@ command is alternatively named \fBadd\fP.
+@@ -115,7 +115,7 @@ command is alternatively named \fBadd\fP.
  \fBedit\fP \fIpass-name\fP
  Insert a new password or edit an existing password using the default text editor specified
  by the environment variable \fIEDITOR\fP or using
@@ -27,26 +27,26 @@ index 0dd6952..3b1eb70 100644
  ensure that temporary files are created in \fI/dev/shm\fP in order to avoid writing to
  difficult-to-erase disk sectors. If \fI/dev/shm\fP is not accessible, fallback to
 diff --git a/src/password-store.sh b/src/password-store.sh
-index 6313384..d661707 100755
+index 1ab6fb5..59c885f 100755
 --- a/src/password-store.sh
 +++ b/src/password-store.sh
-@@ -233,7 +233,7 @@ cmd_usage() {
+@@ -273,7 +273,7 @@ cmd_usage() {
  	        during entry. Or, optionally, the entry may be multiline. Prompt before
  	        overwriting existing password unless forced.
  	    $PROGRAM edit pass-name
 -	        Insert a new password or edit an existing password using ${EDITOR:-vi}.
 +	        Insert a new password or edit an existing password using ${EDITOR:-editor}.
- 	    $PROGRAM generate [--no-symbols,-n] [--clip,-c] [--in-place,-i | --force,-f] pass-name pass-length
- 	        Generate a new password of pass-length with optionally no symbols.
+ 	    $PROGRAM generate [--no-symbols,-n] [--clip,-c] [--in-place,-i | --force,-f] pass-name [pass-length]
+ 	        Generate a new password of pass-length (or $GENERATED_LENGTH if unspecified) with optionally no symbols.
  	        Optionally put it on the clipboard and clear board after $CLIP_TIME seconds.
-@@ -419,13 +419,13 @@ cmd_edit() {
+@@ -478,13 +478,13 @@ cmd_edit() {
  		$GPG -d -o "$tmp_file" "${GPG_OPTS[@]}" "$passfile" || exit 1
  		action="Edit"
  	fi
 -	${EDITOR:-vi} "$tmp_file"
 +	${EDITOR:-editor} "$tmp_file"
  	[[ -f $tmp_file ]] || die "New password not saved."
- 	$GPG -d -o - "${GPG_OPTS[@]}" "$passfile" | diff - "$tmp_file" &>/dev/null && die "Password unchanged."
+ 	$GPG -d -o - "${GPG_OPTS[@]}" "$passfile" 2>/dev/null | diff - "$tmp_file" &>/dev/null && die "Password unchanged."
  	while ! $GPG -e "${GPG_RECIPIENT_ARGS[@]}" -o "$passfile" "${GPG_OPTS[@]}" "$tmp_file"; do
  		yesno "GPG encryption failed. Would you like to try again?"
  	done

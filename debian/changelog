@@ -1,3 +1,11 @@
+password-store (1.7-1) UNRELEASED; urgency=medium
+
+  * New upstream release.
+    - Make gpg errors fatal (closes: #739780).
+    - Add keepass2csv2pass.py importer (closes: #820078).
+
+ -- Colin Watson <cjwatson@debian.org>  Sun, 26 Feb 2017 23:29:35 +0000
+
 password-store (1.6.5-4) unstable; urgency=medium
 
   * Use HTTPS for Vcs-* URLs, and link to cgit rather than gitweb.
