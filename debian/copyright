@@ -4,7 +4,7 @@ Upstream-Contact: Jason A. Donenfeld <Jason@zx2c4.com>
 Source: http://www.passwordstore.org/
 
 Files: *
-Copyright: Copyright 2012 Jason A. Donenfeld <Jason@zx2c4.com>
+Copyright: Copyright 2012-2016 Jason A. Donenfeld <Jason@zx2c4.com>
 License: GPL-2+
  This program is free software; you can redistribute it
  and/or modify it under the terms of the GNU General Public
