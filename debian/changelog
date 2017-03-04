@@ -3,6 +3,9 @@ password-store (1.7-1) UNRELEASED; urgency=medium
   * New upstream release.
     - Make gpg errors fatal (closes: #739780).
     - Add keepass2csv2pass.py importer (closes: #820078).
+  * Use "Suggests: python, python3" rather than trying to get dh-python to
+    do this, since it skips packages with private modules that don't have
+    appropriate ${*:Depends} substvars in Depends.
 
  -- Colin Watson <cjwatson@debian.org>  Sun, 26 Feb 2017 23:29:35 +0000
 
