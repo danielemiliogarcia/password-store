@@ -1,4 +1,4 @@
-From 4b867f486149eb14d99eb82055229f2749fd8cd7 Mon Sep 17 00:00:00 2001
+From 68600f68a25bc9addc510de50183532acf2974cb Mon Sep 17 00:00:00 2001
 From: Helmut Grohne <helmut@subdivi.de>
 Date: Sat, 4 Jan 2014 15:05:05 +0000
 Subject: Support gnupg1 as an alternative to gnupg2

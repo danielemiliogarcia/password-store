@@ -1,4 +1,4 @@
-From 86daf1fd6a7d5d3ffa39cdb3b7196b7aba3f6200 Mon Sep 17 00:00:00 2001
+From 123666263d9e1c49417b9853143502b50609e97f Mon Sep 17 00:00:00 2001
 From: Colin Watson <cjwatson@debian.org>
 Date: Sat, 4 Jan 2014 14:29:57 +0000
 Subject: Use editor(1) rather than vi(1) if EDITOR is unset
@@ -27,7 +27,7 @@ index e842178..966a447 100644
  ensure that temporary files are created in \fI/dev/shm\fP in order to avoid writing to
  difficult-to-erase disk sectors. If \fI/dev/shm\fP is not accessible, fallback to
 diff --git a/src/password-store.sh b/src/password-store.sh
-index 1ab6fb5..59c885f 100755
+index d77ff12..76108ab 100755
 --- a/src/password-store.sh
 +++ b/src/password-store.sh
 @@ -273,7 +273,7 @@ cmd_usage() {
