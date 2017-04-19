@@ -1,2 +1,3 @@
 editor.patch
 gnupg1-support.patch
+init-avoid-extraneous-reencryption.patch

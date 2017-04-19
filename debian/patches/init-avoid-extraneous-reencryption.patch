@@ -1,0 +1,27 @@
+From fdec5624f1a289331b29cc914dab167b2e68bc2a Mon Sep 17 00:00:00 2001
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+Date: Thu, 13 Apr 2017 12:07:57 +0200
+Subject: init: match only the public key
+
+Bug-Debian: https://bugs.debian.org/860353
+Origin: backport, https://git.zx2c4.com/password-store/commit/?id=a09d6685e609f9a11fa2b9b5904d39ef8966b3b7
+Last-Update: 2017-04-20
+
+Patch-Name: init-avoid-extraneous-reencryption.patch
+---
+ src/password-store.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/password-store.sh b/src/password-store.sh
+index d661707..43a34ec 100755
+--- a/src/password-store.sh
++++ b/src/password-store.sh
+@@ -102,7 +102,7 @@ reencrypt_path() {
+ 			done
+ 			gpg_keys="$($GPG --list-keys --with-colons "${GPG_RECIPIENTS[@]}" | sed -n 's/sub:[^:]*:[^:]*:[^:]*:\([^:]*\):[^:]*:[^:]*:[^:]*:[^:]*:[^:]*:[^:]*:[a-zA-Z]*e[a-zA-Z]*:.*/\1/p' | LC_ALL=C sort -u)"
+ 		fi
+-		current_keys="$($GPG -v --no-secmem-warning --no-permission-warning --list-only --keyid-format long "$passfile" 2>&1 | cut -d ' ' -f 5 | LC_ALL=C sort -u)"
++		current_keys="$(LC_ALL=C $GPG -v --no-secmem-warning --no-permission-warning --list-only --keyid-format long "$passfile" 2>&1 | sed -n 's/^gpg: public key is \([A-F0-9]\+\)$/\1/p' | LC_ALL=C sort -u)"
+ 
+ 		if [[ $gpg_keys != "$current_keys" ]]; then
+ 			echo "$passfile_display: reencrypting to ${gpg_keys//$'\n'/ }"
