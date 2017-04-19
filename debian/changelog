@@ -1,9 +1,9 @@
-password-store (1.6.5-5) UNRELEASED; urgency=medium
+password-store (1.6.5-5) unstable; urgency=medium
 
   * Cherry-pick from upstream:
     - init: match only the public key (closes: #860353).
 
- -- Colin Watson <cjwatson@debian.org>  Thu, 20 Apr 2017 00:49:18 +0100
+ -- Colin Watson <cjwatson@debian.org>  Thu, 20 Apr 2017 00:50:19 +0100
 
 password-store (1.6.5-4) unstable; urgency=medium
 
