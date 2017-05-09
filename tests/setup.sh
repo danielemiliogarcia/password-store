@@ -49,7 +49,9 @@ if [[ ! -e $PASS ]]; then
 fi
 
 # Note: the assumption is the test key is unencrypted.
-export GNUPGHOME="$TEST_HOME/gnupg/"
+rm -rf "$SHARNESS_TRASH_DIRECTORY/gnupg"
+cp -a "$TEST_HOME/gnupg" "$SHARNESS_TRASH_DIRECTORY/gnupg"
+export GNUPGHOME="$SHARNESS_TRASH_DIRECTORY/gnupg/"
 chmod 700 "$GNUPGHOME"
 GPG="gpg"
 which gpg2 &>/dev/null && GPG="gpg2"
