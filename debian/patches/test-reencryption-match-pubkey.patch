@@ -1,0 +1,30 @@
+From 543dceb790d2f50044be0f2a9394bc5c1186b968 Mon Sep 17 00:00:00 2001
+From: Colin Watson <cjwatson@debian.org>
+Date: Tue, 9 May 2017 11:14:06 +0100
+Subject: Match only the public key in reencryption tests
+
+This is the same fix as in a09d6685e609f9a11fa2b9b5904d39ef8966b3b7, but
+in one more place.  gpg2 might need to start an agent in the context of
+this test, for example if running the test in isolation.
+
+Forwarded: https://lists.zx2c4.com/pipermail/password-store/2017-May/002933.html
+Last-Update: 2015-05-09
+
+Patch-Name: test-reencryption-match-pubkey.patch
+---
+ tests/t0300-reencryption.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tests/t0300-reencryption.sh b/tests/t0300-reencryption.sh
+index 58d6931..e1c9d79 100755
+--- a/tests/t0300-reencryption.sh
++++ b/tests/t0300-reencryption.sh
+@@ -10,7 +10,7 @@ canonicalize_gpg_keys() {
+ 	$GPG --list-keys --with-colons "$@" | sed -n 's/sub:[^:]*:[^:]*:[^:]*:\([^:]*\):[^:]*:[^:]*:[^:]*:[^:]*:[^:]*:[^:]*:[a-zA-Z]*e[a-zA-Z]*:.*/\1/p' | LC_ALL=C sort -u
+ }
+ gpg_keys_from_encrypted_file() {
+-	$GPG -v --no-secmem-warning --no-permission-warning --list-only --keyid-format long "$1" 2>&1 | cut -d ' ' -f 5 | LC_ALL=C sort -u
++	LC_ALL=C $GPG -v --no-secmem-warning --no-permission-warning --list-only --keyid-format long "$1" 2>&1 | sed -n 's/^gpg: public key is \([A-F0-9]\+\)$/\1/p' | LC_ALL=C sort -u
+ }
+ gpg_keys_from_group() {
+ 	local output="$($GPG --list-config --with-colons | sed -n "s/^cfg:group:$1:\\(.*\\)/\\1/p" | head -n 1)"

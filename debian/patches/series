@@ -1,3 +1,5 @@
 editor.patch
 gnupg1-support.patch
 init-avoid-extraneous-reencryption.patch
+test-reencryption-match-pubkey.patch
+temporary-gnupghome.patch
