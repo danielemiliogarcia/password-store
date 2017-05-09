@@ -1,3 +1,10 @@
+password-store (1.7.1-2) UNRELEASED; urgency=medium
+
+  * Ensure that GNUPGHOME is set to a short enough path while running tests
+    (closes: #862071).
+
+ -- Colin Watson <cjwatson@debian.org>  Tue, 09 May 2017 11:29:15 +0100
+
 password-store (1.7.1-1) experimental; urgency=medium
 
   * New upstream release.

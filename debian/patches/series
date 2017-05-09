@@ -1,2 +1,4 @@
 editor.patch
 gnupg1-support.patch
+test-reencryption-match-pubkey.patch
+temporary-gnupghome.patch
