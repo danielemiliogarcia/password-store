@@ -1,3 +1,10 @@
+password-store (1.6.5-7) UNRELEASED; urgency=medium
+
+  * Cherry-pick from upstream:
+    - Make gpg errors fatal (closes: #863404).
+
+ -- Colin Watson <cjwatson@debian.org>  Fri, 26 May 2017 13:27:11 +0100
+
 password-store (1.6.5-6) unstable; urgency=medium
 
   * Ensure that GNUPGHOME is set to a short enough path while running tests

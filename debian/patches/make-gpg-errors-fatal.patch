@@ -1,0 +1,56 @@
+From 3b83b02f9e61e4f342a72812eac38b51edcfb82b Mon Sep 17 00:00:00 2001
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+Date: Sat, 6 Feb 2016 21:14:25 +0100
+Subject: Make gpg errors fatal
+
+Bug-Debian: https://bugs.debian.org/863404
+Origin: upstream, https://git.zx2c4.com/password-store/commit/?id=4b0b6ac82f0c372405cadd921c9d5a1d9927788f
+Last-Update: 2017-05-26
+
+Patch-Name: make-gpg-errors-fatal.patch
+---
+ src/password-store.sh | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/src/password-store.sh b/src/password-store.sh
+index 43a34ec..c24d1e0 100755
+--- a/src/password-store.sh
++++ b/src/password-store.sh
+@@ -378,7 +378,7 @@ cmd_insert() {
+ 	if [[ $multiline -eq 1 ]]; then
+ 		echo "Enter contents of $path and press Ctrl+D when finished:"
+ 		echo
+-		$GPG -e "${GPG_RECIPIENT_ARGS[@]}" -o "$passfile" "${GPG_OPTS[@]}"
++		$GPG -e "${GPG_RECIPIENT_ARGS[@]}" -o "$passfile" "${GPG_OPTS[@]}" || die "Password encryption aborted."
+ 	elif [[ $noecho -eq 1 ]]; then
+ 		local password password_again
+ 		while true; do
+@@ -387,16 +387,16 @@ cmd_insert() {
+ 			read -r -p "Retype password for $path: " -s password_again || exit 1
+ 			echo
+ 			if [[ $password == "$password_again" ]]; then
+-				$GPG -e "${GPG_RECIPIENT_ARGS[@]}" -o "$passfile" "${GPG_OPTS[@]}" <<<"$password"
++				$GPG -e "${GPG_RECIPIENT_ARGS[@]}" -o "$passfile" "${GPG_OPTS[@]}" <<<"$password" || die "Password encryption aborted."
+ 				break
+ 			else
+-				echo "Error: the entered passwords do not match."
++				die "Error: the entered passwords do not match."
+ 			fi
+ 		done
+ 	else
+ 		local password
+ 		read -r -p "Enter password for $path: " -e password
+-		$GPG -e "${GPG_RECIPIENT_ARGS[@]}" -o "$passfile" "${GPG_OPTS[@]}" <<<"$password"
++		$GPG -e "${GPG_RECIPIENT_ARGS[@]}" -o "$passfile" "${GPG_OPTS[@]}" <<<"$password" || die "Password encryption aborted."
+ 	fi
+ 	git_add_file "$passfile" "Add given password for $path to store."
+ }
+@@ -455,7 +455,7 @@ cmd_generate() {
+ 	local pass="$(pwgen -s $symbols $length 1)"
+ 	[[ -n $pass ]] || exit 1
+ 	if [[ $inplace -eq 0 ]]; then
+-		$GPG -e "${GPG_RECIPIENT_ARGS[@]}" -o "$passfile" "${GPG_OPTS[@]}" <<<"$pass"
++		$GPG -e "${GPG_RECIPIENT_ARGS[@]}" -o "$passfile" "${GPG_OPTS[@]}" <<<"$pass" || die "Password encryption aborted."
+ 	else
+ 		local passfile_temp="${passfile}.tmp.${RANDOM}.${RANDOM}.${RANDOM}.${RANDOM}.--"
+ 		if $GPG -d "${GPG_OPTS[@]}" "$passfile" | sed $'1c \\\n'"$(sed 's/[\/&]/\\&/g' <<<"$pass")"$'\n' | $GPG -e "${GPG_RECIPIENT_ARGS[@]}" -o "$passfile_temp" "${GPG_OPTS[@]}"; then
