@@ -1,8 +1,8 @@
-password-store (1.7.1-3) UNRELEASED; urgency=medium
+password-store (1.7.1-3) unstable; urgency=medium
 
   * Upload to unstable.
 
- -- Colin Watson <cjwatson@debian.org>  Sun, 18 Jun 2017 11:43:10 +0100
+ -- Colin Watson <cjwatson@debian.org>  Sun, 18 Jun 2017 11:43:26 +0100
 
 password-store (1.7.1-2) experimental; urgency=medium
 
