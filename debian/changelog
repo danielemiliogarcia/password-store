@@ -23,6 +23,27 @@ password-store (1.7-1) experimental; urgency=medium
 
  -- Colin Watson <cjwatson@debian.org>  Sat, 04 Mar 2017 23:07:01 +0000
 
+password-store (1.6.5-7) unstable; urgency=medium
+
+  * Cherry-pick from upstream:
+    - Make gpg errors fatal (closes: #863404).
+
+ -- Colin Watson <cjwatson@debian.org>  Fri, 26 May 2017 13:29:21 +0100
+
+password-store (1.6.5-6) unstable; urgency=medium
+
+  * Ensure that GNUPGHOME is set to a short enough path while running tests
+    (closes: #862071).
+
+ -- Colin Watson <cjwatson@debian.org>  Tue, 09 May 2017 11:45:54 +0100
+
+password-store (1.6.5-5) unstable; urgency=medium
+
+  * Cherry-pick from upstream:
+    - init: match only the public key (closes: #860353).
+
+ -- Colin Watson <cjwatson@debian.org>  Thu, 20 Apr 2017 00:50:19 +0100
+
 password-store (1.6.5-4) unstable; urgency=medium
 
   * Use HTTPS for Vcs-* URLs, and link to cgit rather than gitweb.
