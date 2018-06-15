@@ -1,3 +1,11 @@
+password-store (1.7.2-1) UNRELEASED; urgency=medium
+
+  * New upstream release:
+    - CVE-2018-12356: Ensure signature regexes are anchored (closes:
+      #901574).
+
+ -- Colin Watson <cjwatson@debian.org>  Fri, 15 Jun 2018 01:11:42 +0100
+
 password-store (1.7.1-4) unstable; urgency=medium
 
   * Move VCS to salsa.debian.org.
