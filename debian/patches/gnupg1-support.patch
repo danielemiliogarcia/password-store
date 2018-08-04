@@ -1,4 +1,4 @@
-From f30e07b3fc28ebbb146c358e4690f3076f27a124 Mon Sep 17 00:00:00 2001
+From c6a23b28b8539a272bb94491aa190c7fea81f835 Mon Sep 17 00:00:00 2001
 From: Helmut Grohne <helmut@subdivi.de>
 Date: Sat, 4 Jan 2014 15:05:05 +0000
 Subject: Support gnupg1 as an alternative to gnupg2
@@ -14,7 +14,7 @@ Patch-Name: gnupg1-support.patch
  2 files changed, 6 insertions(+), 2 deletions(-)
 
 diff --git a/src/completion/pass.bash-completion b/src/completion/pass.bash-completion
-index 456485b..d05b365 100644
+index bbe9d0c..5c6a02c 100644
 --- a/src/completion/pass.bash-completion
 +++ b/src/completion/pass.bash-completion
 @@ -72,8 +72,10 @@ _pass_complete_folders () {
