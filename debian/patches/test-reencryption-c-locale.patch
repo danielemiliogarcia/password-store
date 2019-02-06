@@ -1,4 +1,4 @@
-From cadee448bb6e9688512658f9987b68b580c87e76 Mon Sep 17 00:00:00 2001
+From 27d8dedf9595d240142e59c60a69de9a5fb0213d Mon Sep 17 00:00:00 2001
 From: Colin Watson <cjwatson@debian.org>
 Date: Tue, 9 May 2017 11:14:06 +0100
 Subject: Run gpg with LC_ALL=C in reencryption test

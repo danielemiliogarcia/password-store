@@ -32,7 +32,9 @@ function __fish_pass_uses_command
 end
 
 function __fish_pass_print_gpg_keys
-    gpg2 --list-keys | grep uid | sed 's/.*<\(.*\)>/\1/'
+    set -l gpg gpg2
+    command -sq $gpg; or set gpg gpg
+    $gpg --list-keys | grep uid | sed 's/.*<\(.*\)>/\1/'
 end
 
 function __fish_pass_print

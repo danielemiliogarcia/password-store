@@ -1,17 +1,20 @@
-From c6a23b28b8539a272bb94491aa190c7fea81f835 Mon Sep 17 00:00:00 2001
+From 0003deef64e366aafcba078a17d9f37a6678370e Mon Sep 17 00:00:00 2001
 From: Helmut Grohne <helmut@subdivi.de>
 Date: Sat, 4 Jan 2014 15:05:05 +0000
 Subject: Support gnupg1 as an alternative to gnupg2
 
+This also deals with systems where "gpg" is GnuPG 2.
+
 Bug-Debian: http://bugs.debian.org/701845
 Forwarded: no
-Last-Update: 2014-04-14
+Last-Update: 2019-02-06
 
 Patch-Name: gnupg1-support.patch
 ---
  src/completion/pass.bash-completion | 4 +++-
+ src/completion/pass.fish-completion | 4 +++-
  src/completion/pass.zsh-completion  | 4 +++-
- 2 files changed, 6 insertions(+), 2 deletions(-)
+ 3 files changed, 9 insertions(+), 3 deletions(-)
 
 diff --git a/src/completion/pass.bash-completion b/src/completion/pass.bash-completion
 index bbe9d0c..5c6a02c 100644
@@ -29,6 +32,21 @@ index bbe9d0c..5c6a02c 100644
  	COMPREPLY+=($(compgen -W "${keys}" -- ${cur}))
  }
  
+diff --git a/src/completion/pass.fish-completion b/src/completion/pass.fish-completion
+index 8637874..aa509a6 100644
+--- a/src/completion/pass.fish-completion
++++ b/src/completion/pass.fish-completion
+@@ -32,7 +32,9 @@ function __fish_pass_uses_command
+ end
+ 
+ function __fish_pass_print_gpg_keys
+-    gpg2 --list-keys | grep uid | sed 's/.*<\(.*\)>/\1/'
++    set -l gpg gpg2
++    command -sq $gpg; or set gpg gpg
++    $gpg --list-keys | grep uid | sed 's/.*<\(.*\)>/\1/'
+ end
+ 
+ function __fish_pass_print
 diff --git a/src/completion/pass.zsh-completion b/src/completion/pass.zsh-completion
 index 27ce15a..56e1324 100644
 --- a/src/completion/pass.zsh-completion

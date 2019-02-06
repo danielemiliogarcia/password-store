@@ -1,4 +1,4 @@
-From b522937e97d4ba3a7ac6e494f290efbbea5beaeb Mon Sep 17 00:00:00 2001
+From 6d5e12e4f3ec345ff0ceab43f862c11ae947f4c2 Mon Sep 17 00:00:00 2001
 From: Colin Watson <cjwatson@debian.org>
 Date: Tue, 9 May 2017 11:17:53 +0100
 Subject: Copy tests/gnupg/ into trash directory for tests
