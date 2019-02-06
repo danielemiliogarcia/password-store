@@ -11,8 +11,8 @@ Rules-Requires-Root: no
 
 Package: pass
 Architecture: all
-Depends: ${misc:Depends}, gnupg2 | gnupg, tree (>= 1.7.0)
-Recommends: gnupg2, git, qrencode, xclip
+Depends: ${misc:Depends}, gnupg, tree (>= 1.7.0)
+Recommends: git, qrencode, xclip
 Suggests: python, python3, perl, libxml-simple-perl, ruby
 Description: lightweight directory-based password manager
  Stores, retrieves, generates, and synchronizes passwords securely using
