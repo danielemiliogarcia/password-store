@@ -34,15 +34,11 @@ tmpdir() {
 qrcode() {
 	if type imgcat >/dev/null 2>&1; then
 		echo -n "$1" | qrencode --size 10 -o - | imgcat
-	elif type gm >/dev/null 2>&1; then
-		echo -n "$1" | qrencode --size 10 -o - | gm display -title "pass: $2" -geometry +200+200 -
-	elif type display >/dev/null 2>&1; then
-		echo -n "$1" | qrencode --size 10 -o - | display -title "pass: $2" -geometry +200+200 -
 	else
 		echo -n "$1" | qrencode -t utf8
 	fi
 }
 
-GETOPT="$(brew --prefix gnu-getopt 2>/dev/null || { which port &>/dev/null && echo /opt/local; } || echo /usr/local)/bin/getopt"
+GETOPT="$({ test -x /usr/local/opt/gnu-getopt/bin/getopt && echo /usr/local/opt/gnu-getopt; } || brew --prefix gnu-getopt 2>/dev/null || { which port &>/dev/null && echo /opt/local; } || echo /usr/local)/bin/getopt"
 SHRED="srm -f -z"
 BASE64="openssl base64"

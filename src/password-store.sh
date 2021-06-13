@@ -17,9 +17,10 @@ EXTENSIONS="${PASSWORD_STORE_EXTENSIONS_DIR:-$PREFIX/.extensions}"
 X_SELECTION="${PASSWORD_STORE_X_SELECTION:-clipboard}"
 CLIP_TIME="${PASSWORD_STORE_CLIP_TIME:-45}"
 GENERATED_LENGTH="${PASSWORD_STORE_GENERATED_LENGTH:-25}"
-CHARACTER_SET="${PASSWORD_STORE_CHARACTER_SET:-[:graph:]}"
+CHARACTER_SET="${PASSWORD_STORE_CHARACTER_SET:-[:punct:][:alnum:]}"
 CHARACTER_SET_NO_SYMBOLS="${PASSWORD_STORE_CHARACTER_SET_NO_SYMBOLS:-[:alnum:]}"
 
+unset GIT_DIR GIT_WORK_TREE GIT_NAMESPACE GIT_INDEX_FILE GIT_INDEX_VERSION GIT_OBJECT_DIRECTORY GIT_COMMON_DIR
 export GIT_CEILING_DIRECTORIES="$PREFIX/.."
 
 #
@@ -99,6 +100,8 @@ set_gpg_recipients() {
 
 	local gpg_id
 	while read -r gpg_id; do
+		gpg_id="${gpg_id%%#*}" # strip comment
+		[[ -n $gpg_id ]] || continue
 		GPG_RECIPIENT_ARGS+=( "-r" "$gpg_id" )
 		GPG_RECIPIENTS+=( "$gpg_id" )
 	done < "$current"
@@ -108,6 +111,7 @@ reencrypt_path() {
 	local prev_gpg_recipients="" gpg_keys="" current_keys="" index passfile
 	local groups="$($GPG $PASSWORD_STORE_GPG_OPTS --list-config --with-colons | grep "^cfg:group:.*")"
 	while read -r -d "" passfile; do
+		[[ -L $passfile ]] && continue
 		local passfile_dir="${passfile%/*}"
 		passfile_dir="${passfile_dir#$PREFIX}"
 		passfile_dir="${passfile_dir#/}"
@@ -123,7 +127,7 @@ reencrypt_path() {
 				IFS=";" eval 'GPG_RECIPIENTS+=( $group )' # http://unix.stackexchange.com/a/92190
 				unset "GPG_RECIPIENTS[$index]"
 			done
-			gpg_keys="$($GPG $PASSWORD_STORE_GPG_OPTS --list-keys --with-colons "${GPG_RECIPIENTS[@]}" | sed -n 's/^sub:[^:]*:[^:]*:[^:]*:\([^:]*\):[^:]*:[^:]*:[^:]*:[^:]*:[^:]*:[^:]*:[a-zA-Z]*e[a-zA-Z]*:.*/\1/p' | LC_ALL=C sort -u)"
+			gpg_keys="$($GPG $PASSWORD_STORE_GPG_OPTS --list-keys --with-colons "${GPG_RECIPIENTS[@]}" | sed -n 's/^sub:[^idr:]*:[^:]*:[^:]*:\([^:]*\):[^:]*:[^:]*:[^:]*:[^:]*:[^:]*:[^:]*:[a-zA-Z]*e[a-zA-Z]*:.*/\1/p' | LC_ALL=C sort -u)"
 		fi
 		current_keys="$(LC_ALL=C $GPG $PASSWORD_STORE_GPG_OPTS -v --no-secmem-warning --no-permission-warning --decrypt --list-only --keyid-format long "$passfile" 2>&1 | sed -n 's/^gpg: public key is \([A-F0-9]\+\)$/\1/p' | LC_ALL=C sort -u)"
 
@@ -151,16 +155,32 @@ check_sneaky_paths() {
 #
 
 clip() {
+	if [[ -n $WAYLAND_DISPLAY ]]; then
+		local copy_cmd=( wl-copy )
+		local paste_cmd=( wl-paste -n )
+		if [[ $X_SELECTION == primary ]]; then
+			copy_cmd+=( --primary )
+			paste_cmd+=( --primary )
+		fi
+		local display_name="$WAYLAND_DISPLAY"
+	elif [[ -n $DISPLAY ]]; then
+		local copy_cmd=( xclip -selection "$X_SELECTION" )
+		local paste_cmd=( xclip -o -selection "$X_SELECTION" )
+		local display_name="$DISPLAY"
+	else
+		die "Error: No X11 or Wayland display detected"
+	fi
+	local sleep_argv0="password store sleep on display $display_name"
+
 	# This base64 business is because bash cannot store binary data in a shell
 	# variable. Specifically, it cannot store nulls nor (non-trivally) store
 	# trailing new lines.
-	local sleep_argv0="password store sleep on display $DISPLAY"
 	pkill -f "^$sleep_argv0" 2>/dev/null && sleep 0.5
-	local before="$(xclip -o -selection "$X_SELECTION" 2>/dev/null | $BASE64)"
-	echo -n "$1" | xclip -selection "$X_SELECTION" || die "Error: Could not copy data to the clipboard"
+	local before="$("${paste_cmd[@]}" 2>/dev/null | $BASE64)"
+	echo -n "$1" | "${copy_cmd[@]}" || die "Error: Could not copy data to the clipboard"
 	(
 		( exec -a "$sleep_argv0" bash <<<"trap 'kill %1' TERM; sleep '$CLIP_TIME' & wait" )
-		local now="$(xclip -o -selection "$X_SELECTION" | $BASE64)"
+		local now="$("${paste_cmd[@]}" | $BASE64)"
 		[[ $now != $(echo -n "$1" | $BASE64) ]] && before="$now"
 
 		# It might be nice to programatically check to see if klipper exists,
@@ -172,7 +192,7 @@ clip() {
 		# so we axe it here:
 		qdbus org.kde.klipper /klipper org.kde.klipper.klipper.clearClipboardHistory &>/dev/null
 
-		echo "$before" | $BASE64 -d | xclip -selection "$X_SELECTION"
+		echo "$before" | $BASE64 -d | "${copy_cmd[@]}"
 	) >/dev/null 2>&1 & disown
 	echo "Copied $2 to clipboard. Will clear in $CLIP_TIME seconds."
 }
@@ -242,7 +262,7 @@ cmd_version() {
 	============================================
 	= pass: the standard unix password manager =
 	=                                          =
-	=                  v1.7.3                  =
+	=                  v1.7.4                  =
 	=                                          =
 	=             Jason A. Donenfeld           =
 	=               Jason@zx2c4.com            =
@@ -335,7 +355,7 @@ cmd_init() {
 				signing_keys+=( --default-key $key )
 			done
 			$GPG "${GPG_OPTS[@]}" "${signing_keys[@]}" --detach-sign "$gpg_id" || die "Could not sign .gpg_id."
-			key="$($GPG --verify --status-fd=1 "$gpg_id.sig" "$gpg_id" 2>/dev/null | sed -n 's/^\[GNUPG:\] VALIDSIG [A-F0-9]\{40\} .* \([A-F0-9]\{40\}\)$/\1/p')"
+			key="$($GPG "${GPG_OPTS[@]}" --verify --status-fd=1 "$gpg_id.sig" "$gpg_id" 2>/dev/null | sed -n 's/^\[GNUPG:\] VALIDSIG [A-F0-9]\{40\} .* \([A-F0-9]\{40\}\)$/\1/p')"
 			[[ -n $key ]] || die "Signing of .gpg_id unsuccessful."
 			git_add_file "$gpg_id.sig" "Signing new GPG id with ${key//[$IFS]/,}."
 		fi
@@ -382,7 +402,7 @@ cmd_show() {
 		else
 			echo "${path%\/}"
 		fi
-		tree -C -l --noreport "$PREFIX/$path" | tail -n +2 | sed -E 's/\.gpg(\x1B\[[0-9]+m)?( ->|$)/\1\2/g' # remove .gpg at end of line, but keep colors
+		tree -N -C -l --noreport "$PREFIX/$path" | tail -n +2 | sed -E 's/\.gpg(\x1B\[[0-9]+m)?( ->|$)/\1\2/g' # remove .gpg at end of line, but keep colors
 	elif [[ -z $path ]]; then
 		die "Error: password store is empty. Try \"pass init\"."
 	else
@@ -394,7 +414,7 @@ cmd_find() {
 	[[ $# -eq 0 ]] && die "Usage: $PROGRAM $COMMAND pass-names..."
 	IFS="," eval 'echo "Search Terms: $*"'
 	local terms="*$(printf '%s*|*' "$@")"
-	tree -C -l --noreport -P "${terms%|*}" --prune --matchdirs --ignore-case "$PREFIX" | tail -n +2 | sed -E 's/\.gpg(\x1B\[[0-9]+m)?( ->|$)/\1\2/g'
+	tree -N -C -l --noreport -P "${terms%|*}" --prune --matchdirs --ignore-case "$PREFIX" | tail -n +2 | sed -E 's/\.gpg(\x1B\[[0-9]+m)?( ->|$)/\1\2/g'
 }
 
 cmd_grep() {
