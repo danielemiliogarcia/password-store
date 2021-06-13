@@ -1,4 +1,4 @@
-From 0003deef64e366aafcba078a17d9f37a6678370e Mon Sep 17 00:00:00 2001
+From 79cedccb9d7027275124d6a1b2140d774c2e24d0 Mon Sep 17 00:00:00 2001
 From: Helmut Grohne <helmut@subdivi.de>
 Date: Sat, 4 Jan 2014 15:05:05 +0000
 Subject: Support gnupg1 as an alternative to gnupg2
@@ -7,36 +7,19 @@ This also deals with systems where "gpg" is GnuPG 2.
 
 Bug-Debian: http://bugs.debian.org/701845
 Forwarded: no
-Last-Update: 2019-02-06
+Last-Update: 2021-06-13
 
 Patch-Name: gnupg1-support.patch
 ---
- src/completion/pass.bash-completion | 4 +++-
  src/completion/pass.fish-completion | 4 +++-
  src/completion/pass.zsh-completion  | 4 +++-
- 3 files changed, 9 insertions(+), 3 deletions(-)
+ 2 files changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/src/completion/pass.bash-completion b/src/completion/pass.bash-completion
-index bbe9d0c..5c6a02c 100644
---- a/src/completion/pass.bash-completion
-+++ b/src/completion/pass.bash-completion
-@@ -72,8 +72,10 @@ _pass_complete_folders () {
- 
- _pass_complete_keys () {
- 	local IFS=$'\n'
-+	local GPG=gpg2
-+	which $GPG >/dev/null || GPG=gpg
- 	# Extract names and email addresses from gpg --list-keys
--	local keys="$(gpg2 --list-secret-keys --with-colons | cut -d : -f 10 | sort -u | sed '/^$/d')"
-+	local keys="$($GPG --list-secret-keys --with-colons | cut -d : -f 10 | sort -u | sed '/^$/d')"
- 	COMPREPLY+=($(compgen -W "${keys}" -- ${cur}))
- }
- 
 diff --git a/src/completion/pass.fish-completion b/src/completion/pass.fish-completion
-index 8637874..aa509a6 100644
+index 38a4865..e6d7ed7 100644
 --- a/src/completion/pass.fish-completion
 +++ b/src/completion/pass.fish-completion
-@@ -32,7 +32,9 @@ function __fish_pass_uses_command
+@@ -28,7 +28,9 @@ function __fish_pass_uses_command
  end
  
  function __fish_pass_print_gpg_keys
@@ -48,7 +31,7 @@ index 8637874..aa509a6 100644
  
  function __fish_pass_print
 diff --git a/src/completion/pass.zsh-completion b/src/completion/pass.zsh-completion
-index 27ce15a..56e1324 100644
+index d911e12..59fdfa2 100644
 --- a/src/completion/pass.zsh-completion
 +++ b/src/completion/pass.zsh-completion
 @@ -137,8 +137,10 @@ _pass_complete_entries () {

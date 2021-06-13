@@ -35,6 +35,7 @@ function! s:CheckArgsRedact()
 
   " Tell the user what we're doing so they know this worked, via a message and
   " a global variable they can check
+  redraw
   echomsg 'Editing password file--disabled leaky options!'
   let g:redact_pass_redacted = 1
 
@@ -48,4 +49,10 @@ augroup redact_pass
         \,$TMPDIR/pass.?*/?*.txt
         \,/tmp/pass.?*/?*.txt
         \ call s:CheckArgsRedact()
+  " Work around macOS' dynamic symlink structure for temporary directories
+  if has('mac')
+    autocmd VimEnter
+          \ /private/var/?*/pass.?*/?*.txt
+          \ call s:CheckArgsRedact()
+  endif
 augroup END
