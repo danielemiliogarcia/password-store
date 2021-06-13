@@ -1,10 +1,10 @@
-password-store (1.7.4-1) UNRELEASED; urgency=medium
+password-store (1.7.4-1) unstable; urgency=medium
 
   * New upstream release:
     - Add support for wl-clipboard (closes: #958150).
   * Use debhelper-compat instead of debian/compat.
 
- -- Colin Watson <cjwatson@debian.org>  Sat, 03 Aug 2019 12:51:46 +0100
+ -- Colin Watson <cjwatson@debian.org>  Sun, 13 Jun 2021 11:57:38 +0100
 
 password-store (1.7.3-2) unstable; urgency=medium
 
