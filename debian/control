@@ -3,7 +3,7 @@ Maintainer: Colin Watson <cjwatson@debian.org>
 Section: admin
 Priority: optional
 Standards-Version: 3.9.8
-Build-Depends: debhelper-compat (= 9), gnupg, tree (>= 1.7.0), git
+Build-Depends: debhelper-compat (= 9), gnupg, tree, git
 Homepage: https://www.passwordstore.org/
 Vcs-Git: https://salsa.debian.org/debian/password-store.git
 Vcs-Browser: https://salsa.debian.org/debian/password-store
@@ -11,7 +11,7 @@ Rules-Requires-Root: no
 
 Package: pass
 Architecture: all
-Depends: ${misc:Depends}, gnupg, tree (>= 1.7.0)
+Depends: ${misc:Depends}, gnupg, tree
 Recommends: git, qrencode, xclip | wl-clipboard
 Suggests: python, python3, perl, libxml-simple-perl, ruby
 Description: lightweight directory-based password manager
