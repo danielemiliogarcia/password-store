@@ -1,6 +1,6 @@
 #!/usr/bin/make -f
 %:
-	dh $@ --with elpa
+	dh $@ --with elpa,vim_addon
 
 override_dh_auto_test:
 	set -e; \
