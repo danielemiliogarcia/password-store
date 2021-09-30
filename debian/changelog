@@ -10,6 +10,7 @@ password-store (1.7.4-2) UNRELEASED; urgency=medium
     upgrades from before jessie.
   * Move Vim/Neovim redact_pass plugin to a separate vim-redact-pass
     package.
+  * debian/copyright: contrib/emacs/* is GPL-3+.
 
   [ Martin ]
   * Move Emacs mode to a separate elpa-password-store package (closes:
