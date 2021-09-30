@@ -3,7 +3,7 @@ Maintainer: Colin Watson <cjwatson@debian.org>
 Section: admin
 Priority: optional
 Standards-Version: 3.9.8
-Build-Depends: debhelper-compat (= 9), gnupg, tree, git
+Build-Depends: debhelper-compat (= 9), gnupg, tree, git, dh-elpa
 Homepage: https://www.passwordstore.org/
 Vcs-Git: https://salsa.debian.org/debian/password-store.git
 Vcs-Browser: https://salsa.debian.org/debian/password-store
@@ -17,3 +17,10 @@ Suggests: python, python3, perl, libxml-simple-perl, ruby
 Description: lightweight directory-based password manager
  Stores, retrieves, generates, and synchronizes passwords securely using
  gpg and git.
+
+Package: elpa-password-store
+Architecture: all
+Depends: ${elpa:Depends}, ${misc:Depends}, pass (= ${binary:Version})
+Description: Emacs support for the lightweight directory-based password manager
+ Stores, retrieves, generates, and synchronizes passwords securely using
+ gpg and git in Emacs.

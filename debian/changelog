@@ -9,6 +9,10 @@ password-store (1.7.4-2) UNRELEASED; urgency=medium
   * Remove rm_conffile maintainer script code, which was only needed for
     upgrades from before jessie.
 
+  [ Martin ]
+  * Move Emacs mode to a separate elpa-password-store package (closes:
+    #991431).
+
  -- Debian Janitor <janitor@jelmer.uk>  Thu, 09 Sep 2021 11:00:22 -0000
 
 password-store (1.7.4-1) unstable; urgency=medium
