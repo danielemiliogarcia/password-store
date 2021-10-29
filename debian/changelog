@@ -1,3 +1,9 @@
+password-store (1.7.4-3) UNRELEASED; urgency=medium
+
+  * No-change upload to rebuild binaries on buildds.
+
+ -- Colin Watson <cjwatson@debian.org>  Fri, 29 Oct 2021 14:06:28 +0100
+
 password-store (1.7.4-2) unstable; urgency=medium
 
   [ Debian Janitor ]
