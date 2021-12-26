@@ -1,3 +1,9 @@
+password-store (1.7.4-4) UNRELEASED; urgency=medium
+
+  * Upgrade to debhelper v13.
+
+ -- Colin Watson <cjwatson@debian.org>  Sun, 26 Dec 2021 00:11:53 +0000
+
 password-store (1.7.4-3) unstable; urgency=medium
 
   * No-change upload to rebuild binaries on buildds.
