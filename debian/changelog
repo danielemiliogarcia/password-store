@@ -1,3 +1,9 @@
+password-store (1.7.4-5) UNRELEASED; urgency=medium
+
+  * Simplify debian/rules using dh-sequence-{elpa,vim-addon}.
+
+ -- Colin Watson <cjwatson@debian.org>  Wed, 29 Dec 2021 02:34:59 +0000
+
 password-store (1.7.4-4) unstable; urgency=medium
 
   * Upgrade to debhelper v13.
