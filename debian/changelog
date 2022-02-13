@@ -1,6 +1,8 @@
 password-store (1.7.4-5) UNRELEASED; urgency=medium
 
   * Simplify debian/rules using dh-sequence-{elpa,vim-addon}.
+  * Cherry-pick from upstream:
+    - Ensure compatibility with tree 2.0 (closes: #1005550).
 
  -- Colin Watson <cjwatson@debian.org>  Wed, 29 Dec 2021 02:34:59 +0000
 
