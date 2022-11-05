@@ -1,3 +1,11 @@
+password-store (1.7.4-6) UNRELEASED; urgency=medium
+
+  * Recommend both xclip and wl-clipboard rather than "xclip |
+    wl-clipboard", since otherwise in practice wl-clipboard never got
+    installed (closes: #1023331).
+
+ -- Colin Watson <cjwatson@debian.org>  Sat, 05 Nov 2022 11:45:05 +0000
+
 password-store (1.7.4-5) unstable; urgency=medium
 
   * Simplify debian/rules using dh-sequence-{elpa,vim-addon}.
