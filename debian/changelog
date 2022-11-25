@@ -1,3 +1,10 @@
+password-store (1.7.4-7) UNRELEASED; urgency=medium
+
+  [ Debian Janitor ]
+  * Update watch file format version to 4.
+
+ -- Colin Watson <cjwatson@debian.org>  Fri, 25 Nov 2022 10:36:08 +0000
+
 password-store (1.7.4-6) unstable; urgency=medium
 
   * Recommend both xclip and wl-clipboard rather than "xclip |
