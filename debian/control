@@ -3,48 +3,55 @@ Maintainer: Colin Watson <cjwatson@debian.org>
 Section: admin
 Priority: optional
 Standards-Version: 3.9.8
-Build-Depends: debhelper-compat (= 13),
-               dh-sequence-elpa,
-               dh-sequence-vim-addon,
-               git,
-               gnupg,
-               tree,
+Build-Depends:
+ debhelper-compat (= 13),
+ dh-sequence-elpa,
+ dh-sequence-vim-addon,
+ git,
+ gnupg,
+ tree,
 Homepage: https://www.passwordstore.org/
 Vcs-Git: https://salsa.debian.org/debian/password-store.git
 Vcs-Browser: https://salsa.debian.org/debian/password-store
 Rules-Requires-Root: no
+X-Style: black
 
 Package: pass
 Architecture: all
-Depends: gnupg,
-         tree,
-         ${misc:Depends},
-Recommends: git,
-            qrencode,
-            xclip,
-            wl-clipboard,
-Suggests: libxml-simple-perl,
-          perl,
-          python,
-          python3,
-          ruby,
+Depends:
+ gnupg,
+ tree,
+ ${misc:Depends},
+Recommends:
+ git,
+ qrencode,
+ wl-clipboard,
+ xclip,
+Suggests:
+ libxml-simple-perl,
+ perl,
+ python,
+ python3,
+ ruby,
 Description: lightweight directory-based password manager
  Stores, retrieves, generates, and synchronizes passwords securely using
  gpg and git.
 
 Package: elpa-password-store
 Architecture: all
-Depends: pass (= ${binary:Version}),
-         ${elpa:Depends},
-         ${misc:Depends},
+Depends:
+ pass (= ${binary:Version}),
+ ${elpa:Depends},
+ ${misc:Depends},
 Description: Emacs support for the lightweight directory-based password manager
  Stores, retrieves, generates, and synchronizes passwords securely using
  gpg and git in Emacs.
 
 Package: vim-redact-pass
 Architecture: all
-Depends: ${misc:Depends},
-         ${vim-addon:Depends},
+Depends:
+ ${misc:Depends},
+ ${vim-addon:Depends},
 Description: stop pass(1) passwords ending up in Vim cache files
  This Vim/Neovim plugin switches off the 'viminfo', 'backup', 'writebackup',
  'swapfile', and 'undofile' options globally when editing a password in
