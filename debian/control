@@ -38,6 +38,7 @@ Description: lightweight directory-based password manager
  gpg and git.
 
 Package: elpa-password-store
+Section: editors
 Architecture: all
 Depends:
  pass (= ${binary:Version}),
@@ -48,6 +49,7 @@ Description: Emacs support for the lightweight directory-based password manager
  gpg and git in Emacs.
 
 Package: vim-redact-pass
+Section: editors
 Architecture: all
 Depends:
  ${misc:Depends},

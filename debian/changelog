@@ -5,6 +5,7 @@ password-store (1.7.4-7) UNRELEASED; urgency=medium
 
   [ Colin Watson ]
   * Apply X-Style: black.
+  * Move elpa-password-store and vim-react-pass to "Section: editors".
 
  -- Colin Watson <cjwatson@debian.org>  Fri, 25 Nov 2022 10:36:08 +0000
 
