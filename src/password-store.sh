@@ -433,7 +433,7 @@ cmd_init() {
 
 cmd_show() {
 	local opts selected_line clip=0 qrcode=0
-	opts="$($GETOPT -o q::c:: -l qrcode::,clip:: -n "$PROGRAM" -- "$@")"
+	opts="$($GETOPT -o q::c::e:: -l qrcode::,clip::,enc:: -n "$PROGRAM" -- "$@")"
 	local err=$?
 	eval set -- "$opts"
 	while true; do case $1 in
@@ -459,6 +459,8 @@ cmd_show() {
 			[[ -n $pass ]] || die "There is no password to put on the clipboard at line ${selected_line}."
 			if [[ $clip -eq 1 ]]; then
 				clip "$pass" "$path"
+			elif [[ $enc -eq 1 ]]; then
+				clipenc "$pass" "$path"
 			elif [[ $qrcode -eq 1 ]]; then
 				qrcode "$pass" "$path"
 			fi
@@ -622,8 +624,6 @@ cmd_generate() {
 
 	if [[ $clip -eq 1 ]]; then
 		clip "$pass" "$path"
-	elif [[ $enc -eq 1 ]]; then
-		clipenc "$pass" "$path"
 	elif [[ $qrcode -eq 1 ]]; then
 		qrcode "$pass" "$path"
 	else
