@@ -4,34 +4,32 @@
 
 ;; Author: Svend Sorensen <svend@svends.net>
 ;; Maintainer: Tino Calancha <tino.calancha@gmail.com>
-;; Version: 2.3.2
+;; Version: 2.1.4
 ;; URL: https://www.passwordstore.org/
-;; Package-Requires: ((emacs "26.1") (with-editor "2.5.11"))
-;; SPDX-License-Identifier: GPL-3.0-or-later
-;; Keywords: tools pass password password-store gpg
+;; Package-Requires: ((emacs "25") (s "1.9.0") (with-editor "2.5.11") (auth-source-pass "5.0.0"))
+;; Keywords: tools pass password password-store
 
 ;; This file is not part of GNU Emacs.
 
-;; This program is free software: you can redistribute it and/or
-;; modify it under the terms of the GNU General Public License as
-;; published by the Free Software Foundation, either version 3 of
-;; the License, or (at your option) any later version.
+;; This program is free software: you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
 
-;; This program is distributed in the hope that it will be
-;; useful, but WITHOUT ANY WARRANTY; without even the implied
-;; warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-;; PURPOSE.  See the GNU General Public License for more details.
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
 
-;; You should have received a copy of the GNU General Public
-;; License along with this program.  If not, see
-;; <http://www.gnu.org/licenses/>.
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
 
-;; This package provides and Emacs interface for working with
-;; pass ("the standard Unix password manager").
-
-;; https://www.passwordstore.org/
+;; This package provides functions for working with pass ("the
+;; standard Unix password manager").
+;;
+;; http://www.passwordstore.org/
 
 ;;; Code:
 
@@ -39,17 +37,9 @@
 (require 'auth-source-pass)
 
 (defgroup password-store '()
-  "Emacs mode for password-store.
-The standard Unix password manager"
+  "Emacs mode for password-store."
   :prefix "password-store-"
-  :group 'password-store
-  :link '(url-link :tag "Description" "https://www.passwordstore.org/")
-  :link '(url-link :tag "Download" "https://melpa.org/#/password-store")
-  :link `(url-link :tag "Send Bug Report"
-                   ,(concat "mailto:" "password-store" "@" "lists.zx2c4" ".com?subject=
-password-store.el bug: \
-&body=Describe bug here, starting with `emacs -q'.  \
-Don't forget to mention your Emacs and library versions.")))
+  :group 'password-store)
 
 (defcustom password-store-password-length 25
   "Default password length."
@@ -65,7 +55,7 @@ Don't forget to mention your Emacs and library versions.")))
   :type 'number)
 
 (defcustom password-store-url-field "url"
-  "Field name used in the files to indicate a URL."
+  "Field name used in the files to indicate an url."
   :group 'password-store
   :type 'string)
 
@@ -77,20 +67,17 @@ Don't forget to mention your Emacs and library versions.")))
   "Timer for clearing clipboard.")
 
 (defun password-store-timeout ()
-  "Number of seconds to wait before restoring the clipboard.
+  "Number of seconds to wait before clearing the password.
 
-This function just returns
-`password-store-time-before-clipboard-restore'.  Kept for
-backward compatibility with other libraries."
-password-store-time-before-clipboard-restore)
-
-(make-obsolete 'password-store-timeout 'password-store-time-before-clipboard-restore "2.0.4")
+This function just returns `password-store-time-before-clipboard-restore'.
+Kept for backward compatibility with other libraries."
+  password-store-time-before-clipboard-restore)
 
 (defun password-store--run-1 (callback &rest args)
   "Run pass with ARGS.
 
-Nil arguments are ignored.  Calls CALLBACK with the output on
-success, or outputs error message on failure."
+Nil arguments are ignored.  Calls CALLBACK with the output on success,
+or outputs error message on failure."
   (let ((output ""))
     (make-process
      :name "password-store-gpg"
@@ -101,10 +88,9 @@ success, or outputs error message on failure."
                (setq output (concat output text)))
      :sentinel (lambda (process state)
                  (cond
-                  ((and (eq (process-status process) 'exit)
-                        (zerop (process-exit-status process)))
+                  ((string= state "finished\n")
                    (funcall callback output))
-                  ((eq (process-status process) 'run) (accept-process-output process))
+                  ((string= state "open\n") (accept-process-output process))
                   (t (error (concat "password-store: " state))))))))
 
 (defun password-store--run (&rest args)
@@ -131,9 +117,9 @@ Nil arguments are ignored.  Output is discarded."
                 (cons password-store-executable
                       (delq nil args)) " "))))
 
-(defun password-store--run-init (gpg-ids &optional subdir)
+(defun password-store--run-init (gpg-ids &optional folder)
   (apply 'password-store--run "init"
-         (if subdir (format "--path=%s" subdir))
+         (if folder (format "--path=%s" folder))
          gpg-ids))
 
 (defun password-store--run-list (&optional subdir)
@@ -243,8 +229,8 @@ ENTRY is the name of a password-store entry."
 (defun password-store-get (entry &optional callback)
   "Return password for ENTRY.
 
-Returns the first line of the password data.  When CALLBACK is
-non-`NIL', call CALLBACK with the first line instead."
+Returns the first line of the password data.
+When CALLBACK is non-`NIL', call CALLBACK with the first line instead."
   (let* ((inhibit-message t)
          (secret (auth-source-pass-get 'secret entry)))
     (if (not callback) secret
@@ -255,10 +241,9 @@ non-`NIL', call CALLBACK with the first line instead."
 ;;;###autoload
 (defun password-store-get-field (entry field &optional callback)
   "Return FIELD for ENTRY.
-FIELD is a string, for instance \"url\".  When CALLBACK is
-non-`NIL', call it with the line associated to FIELD instead.  If
-FIELD equals to symbol secret, then this function reduces to
-`password-store-get'."
+FIELD is a string, for instance \"url\". 
+When CALLBACK is non-`NIL', call it with the line associated to FIELD instead.
+If FIELD equals to symbol secret, then this function reduces to `password-store-get'."
   (let* ((inhibit-message t)
          (secret (auth-source-pass-get field entry)))
     (if (not callback) secret
@@ -271,12 +256,12 @@ FIELD equals to symbol secret, then this function reduces to
 (defun password-store-clear (&optional field)
   "Clear secret in the kill ring.
 
-Optional argument FIELD, a symbol or a string, describes the
-stored secret to clear; if nil, then set it to 'secret.  Note,
-FIELD does not affect the function logic; it is only used to
-display the message:
+Optional argument FIELD, a symbol or a string, describes
+the stored secret to clear; if nil, then set it to 'secret.
+Note, FIELD does not affect the function logic; it is only used
+to display the message:
 
-\(message \"Field %s cleared from kill ring and system clipboard.\" field)."
+\(message \"Field %s cleared.\" field)."
   (interactive "i")
   (unless field (setq field 'secret))
   (when password-store-timeout-timer
@@ -284,15 +269,14 @@ display the message:
     (setq password-store-timeout-timer nil))
   (when password-store-kill-ring-pointer
     (setcar password-store-kill-ring-pointer "")
-    (kill-new "")
     (setq password-store-kill-ring-pointer nil)
-    (message "Field %s cleared from kill ring and system clipboard." field)))
+    (message "Field %s cleared." field)))
 
 (defun password-store--save-field-in-kill-ring (entry secret field)
   (password-store-clear field)
   (kill-new secret)
   (setq password-store-kill-ring-pointer kill-ring-yank-pointer)
-  (message "Copied %s for %s to the kill ring and system clipboard. Will clear in %s seconds."
+  (message "Copied %s for %s to the kill ring. Will clear in %s seconds."
            field entry password-store-time-before-clipboard-restore)
   (setq password-store-timeout-timer
         (run-at-time password-store-time-before-clipboard-restore nil
@@ -302,10 +286,9 @@ display the message:
 (defun password-store-copy (entry)
   "Add password for ENTRY into the kill ring.
 
-Clear previous password from the kill ring.  Pointer to the kill
-ring is stored in `password-store-kill-ring-pointer'.  Password
-is cleared after `password-store-time-before-clipboard-restore'
-seconds."
+Clear previous password from the kill ring.  Pointer to the kill ring
+is stored in `password-store-kill-ring-pointer'.  Password is cleared
+after `password-store-time-before-clipboard-restore' seconds."
   (interactive (list (password-store--completing-read t)))
   (password-store-get
    entry
@@ -316,12 +299,10 @@ seconds."
 (defun password-store-copy-field (entry field)
   "Add FIELD for ENTRY into the kill ring.
 
-Clear previous secret from the kill ring.  Pointer to the kill
-ring is stored in `password-store-kill-ring-pointer'.  Secret
-field is cleared after
-`password-store-time-before-clipboard-restore' seconds.  If FIELD
-equals to symbol secret, then this function reduces to
-`password-store-copy'."
+Clear previous secret from the kill ring.  Pointer to the kill ring is
+stored in `password-store-kill-ring-pointer'.  Secret field is cleared
+after `password-store-timeout' seconds.
+If FIELD equals to symbol secret, then this function reduces to `password-store-copy'."
   (interactive
    (let ((entry (password-store--completing-read)))
      (list entry (password-store-read-field entry))))
@@ -360,36 +341,17 @@ Separate multiple IDs with spaces."
 
 Default PASSWORD-LENGTH is `password-store-password-length'."
   (interactive (list (password-store--completing-read)
-                     (and current-prefix-arg
-                          (abs (prefix-numeric-value current-prefix-arg)))))
-  ;; A message with the output of the command is not printed
-  ;; because the output contains the password.
-  (password-store--run-generate
-   entry
-   (or password-length password-store-password-length)
-   'force)
-  nil)
-
-;;;###autoload
-(defun password-store-generate-no-symbols (entry &optional password-length)
-  "Generate a new password without symbols for ENTRY with PASSWORD-LENGTH.
-
-Default PASSWORD-LENGTH is `password-store-password-length'."
-  (interactive (list (password-store--completing-read)
-                     (and current-prefix-arg
-                          (abs (prefix-numeric-value current-prefix-arg)))))
-  
-  ;; A message with the output of the command is not printed
-  ;; because the output contains the password.
-  (password-store--run-generate
-   entry
-   (or password-length password-store-password-length)
-   'force 'no-symbols)
+                     (when current-prefix-arg
+                       (abs (prefix-numeric-value current-prefix-arg)))))
+  (unless password-length (setq password-length password-store-password-length))
+  ;; A message with the output of the command is not printed because
+  ;; the output contains the password.
+  (password-store--run-generate entry password-length t)
   nil)
 
 ;;;###autoload
 (defun password-store-remove (entry)
-  "Remove ENTRY."
+  "Remove existing password for ENTRY."
   (interactive (list (password-store--completing-read t)))
   (message "%s" (password-store--run-remove entry t)))
 
@@ -402,13 +364,13 @@ Default PASSWORD-LENGTH is `password-store-password-length'."
 
 ;;;###autoload
 (defun password-store-version ()
-  "Show version of `password-store-executable'."
+  "Show version of pass executable."
   (interactive)
   (message "%s" (password-store--run-version)))
 
 ;;;###autoload
 (defun password-store-url (entry)
-  "Load URL for ENTRY."
+  "Browse URL stored in ENTRY."
   (interactive (list (password-store--completing-read t)))
   (let ((url (password-store-get-field entry password-store-url-field)))
     (if url (browse-url url)
