@@ -243,19 +243,20 @@ clipenc() {
     # Manage clipboard history and auto-clear
 	# Run in a disowned subprocess that sends outputs to /dev/null
     (
-        ( exec -a "$sleep_argv0" bash <<<"trap 'kill %1' TERM; sleep '$CLIP_TIME' & wait" )
-        local now="$("${paste_cmd[@]}" | $BASE64)"
+		( exec -a "$sleep_argv0" bash <<<"trap 'kill %1' TERM; sleep '$CLIP_TIME' & wait" )
+		local now="$("${paste_cmd[@]}" | $BASE64)"
+
 		if [[ $now != "$what_was_put_in_clip" ]]; then
 			# Clipboard content changed, so we assume the user has manually copied something else
 			# Do not restore clipboard content
 			before="$now"
 		fi
 
-        # Clear clipboard history (if supported by KDE Klipper)
-        qdbus org.kde.klipper /klipper org.kde.klipper.klipper.clearClipboardHistory &>/dev/null
+		# Clear clipboard history (if supported by KDE Klipper)
+		qdbus org.kde.klipper /klipper org.kde.klipper.klipper.clearClipboardHistory &>/dev/null
 
-        # Restore previous clipboard contents
-        echo "$before" | $BASE64 -d | "${copy_cmd[@]}"
+		# Restore previous clipboard contents
+		echo "$before" | $BASE64 -d | "${copy_cmd[@]}"
     ) >/dev/null 2>&1 & disown
 
     echo "Encrypted data copied to clipboard for recipients: ${GPG_RECIPIENTS[*]}"
@@ -314,7 +315,7 @@ BASE64="base64"
 source "$(dirname "$0")/platform/$(uname | cut -d _ -f 1 | tr '[:upper:]' '[:lower:]').sh" 2>/dev/null # PLATFORM_FUNCTION_FILE
 
 #
-# END platform definableremote -v
+# END platform definable
 #
 
 
@@ -432,7 +433,7 @@ cmd_init() {
 
 cmd_show() {
 	local opts selected_line clip=0 qrcode=0
-	opts="$($GETOPT -o q::c::e:: -l qrcode::,clip::,enc:: -n "$PROGRAM" -- "$@")"
+	opts="$($GETOPT -o q::c:: -l qrcode::,clip:: -n "$PROGRAM" -- "$@")"
 	local err=$?
 	eval set -- "$opts"
 	while true; do case $1 in
@@ -458,8 +459,6 @@ cmd_show() {
 			[[ -n $pass ]] || die "There is no password to put on the clipboard at line ${selected_line}."
 			if [[ $clip -eq 1 ]]; then
 				clip "$pass" "$path"
-			elif [[ $enc -eq 1 ]]; then
-				clipenc "$pass" "$path"
 			elif [[ $qrcode -eq 1 ]]; then
 				qrcode "$pass" "$path"
 			fi
@@ -623,6 +622,8 @@ cmd_generate() {
 
 	if [[ $clip -eq 1 ]]; then
 		clip "$pass" "$path"
+	elif [[ $enc -eq 1 ]]; then
+		clipenc "$pass" "$path"
 	elif [[ $qrcode -eq 1 ]]; then
 		qrcode "$pass" "$path"
 	else
