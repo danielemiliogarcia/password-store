@@ -197,6 +197,72 @@ clip() {
 	echo "Copied $2 to clipboard. Will clear in $CLIP_TIME seconds."
 }
 
+clipenc() {
+    local plaintext="$1"
+    if [[ -z $plaintext ]]; then
+        die "Error: No plaintext provided for encryption."
+    fi
+
+    # Determine GPG recipients dynamically
+    set_gpg_recipients ""  # Use the top-level .gpg-id or the appropriate directory
+    if [[ ${#GPG_RECIPIENTS[@]} -eq 0 ]]; then
+        die "Error: No GPG recipients found. Please run 'pass init' first."
+    fi
+
+    # Prepare GPG recipient arguments
+    local gpg_recipients=("${GPG_RECIPIENT_ARGS[@]}")
+
+    # Handle clipboard tools for Wayland and X11
+    if [[ -n $WAYLAND_DISPLAY ]]; then
+        local copy_enc_cmd=( bash -c "echo -n \"$plaintext\" | gpg --encrypt --armour ${gpg_recipients[*]} | wl-copy" )
+		local copy_cmd=( wl-copy )
+        local paste_cmd=( wl-paste -n )
+        [[ $X_SELECTION == primary ]] && copy_enc_cmd+=( --primary ) && paste_cmd+=( --primary )
+        local display_name="$WAYLAND_DISPLAY"
+    elif [[ -n $DISPLAY ]]; then
+        local copy_enc_cmd=( bash -c "echo -n \"$plaintext\" | gpg --encrypt --armour ${gpg_recipients[*]} | xclip -selection $X_SELECTION" )
+		local copy_cmd=( xclip -selection "$X_SELECTION" )
+        local paste_cmd=( xclip -o -selection $X_SELECTION )
+        local display_name="$DISPLAY"
+    else
+        die "Error: No X11 or Wayland display detected"
+    fi
+
+    # Prevent conflicts with existing clipboard sleep processes
+    local sleep_argv0="password store sleep on display $display_name"
+    pkill -f "^$sleep_argv0" 2>/dev/null && sleep 0.5
+
+    # Store previous clipboard contents
+    local before="$("${paste_cmd[@]}" 2>/dev/null | $BASE64)"
+
+    # Execute the copy encrypted command
+    "${copy_enc_cmd[@]}" || die "Error: Could not encrypt data and copy to the clipboard"
+	# we can re-encrypt to compare, cause every encryption will be different as it uses random nonces, so we will backup the value
+	local what_was_put_in_clip="$("${paste_cmd[@]}" | $BASE64)"
+
+    # Manage clipboard history and auto-clear
+	# Run in a disowned subprocess that sends outputs to /dev/null
+    (
+		( exec -a "$sleep_argv0" bash <<<"trap 'kill %1' TERM; sleep '$CLIP_TIME' & wait" )
+		local now="$("${paste_cmd[@]}" | $BASE64)"
+
+		if [[ $now != "$what_was_put_in_clip" ]]; then
+			# Clipboard content changed, so we assume the user has manually copied something else
+			# Do not restore clipboard content
+			before="$now"
+		fi
+
+		# Clear clipboard history (if supported by KDE Klipper)
+		qdbus org.kde.klipper /klipper org.kde.klipper.klipper.clearClipboardHistory &>/dev/null
+
+		# Restore previous clipboard contents
+		echo "$before" | $BASE64 -d | "${copy_cmd[@]}"
+    ) >/dev/null 2>&1 & disown
+
+    echo "Encrypted data copied to clipboard for recipients: ${GPG_RECIPIENTS[*]}"
+    echo "Will clear in $CLIP_TIME seconds."
+}
+
 qrcode() {
 	if [[ -n $DISPLAY || -n $WAYLAND_DISPLAY ]]; then
 		if type feh >/dev/null 2>&1; then
@@ -284,7 +350,7 @@ cmd_usage() {
 	        List passwords.
 	    $PROGRAM find pass-names...
 	    	List passwords that match pass-names.
-	    $PROGRAM [show] [--clip[=line-number],-c[line-number]] pass-name
+	    $PROGRAM [show] [--clip[=line-number],-c[line-number],--enc[=line-number],-e[line-number]] pass-name
 	        Show existing password and optionally put it on the clipboard.
 	        If put on the clipboard, it will be cleared in $CLIP_TIME seconds.
 	    $PROGRAM grep [GREPOPTIONS] search-string
@@ -367,12 +433,13 @@ cmd_init() {
 
 cmd_show() {
 	local opts selected_line clip=0 qrcode=0
-	opts="$($GETOPT -o q::c:: -l qrcode::,clip:: -n "$PROGRAM" -- "$@")"
+	opts="$($GETOPT -o q::c::e:: -l qrcode::,clip::,enc:: -n "$PROGRAM" -- "$@")"
 	local err=$?
 	eval set -- "$opts"
 	while true; do case $1 in
 		-q|--qrcode) qrcode=1; selected_line="${2:-1}"; shift 2 ;;
 		-c|--clip) clip=1; selected_line="${2:-1}"; shift 2 ;;
+		-e|--enc) enc=1; selected_line="${2:-1}"; shift 2 ;;
 		--) shift; break ;;
 	esac done
 
@@ -383,7 +450,7 @@ cmd_show() {
 	local passfile="$PREFIX/$path.gpg"
 	check_sneaky_paths "$path"
 	if [[ -f $passfile ]]; then
-		if [[ $clip -eq 0 && $qrcode -eq 0 ]]; then
+		if [[ $clip -eq 0 && $qrcode -eq 0 && $enc -eq 0 ]]; then
 			pass="$($GPG -d "${GPG_OPTS[@]}" "$passfile" | $BASE64)" || exit $?
 			echo "$pass" | $BASE64 -d
 		else
@@ -392,6 +459,8 @@ cmd_show() {
 			[[ -n $pass ]] || die "There is no password to put on the clipboard at line ${selected_line}."
 			if [[ $clip -eq 1 ]]; then
 				clip "$pass" "$path"
+			elif [[ $enc -eq 1 ]]; then
+				clipenc "$pass" "$path"
 			elif [[ $qrcode -eq 1 ]]; then
 				qrcode "$pass" "$path"
 			fi
